@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Shadhin -AI</title>
+  <style>
+    :root {
+      --bg-main: #131314;
+      --bg-surface: #1e1f20;
+      --bg-elevated: #282a2c;
+      --text-main: #e3e3e3;
+      --text-muted: #9aa0a6;
+      --border-subtle: rgba(255, 255, 255, 0.12);
+      --accent-blue: #a8c7fa;
+      --accent-send: #4c8df6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: var(--bg-main);
+      color: var(--text-main);
+      font-family: "Google Sans", Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      overflow: hidden;
+    }
+
+    /* Splash screen: visible only at app launch */
+    #splash-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #131314;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: opacity 0.45s ease, visibility 0.45s ease;
+    }
+
+    #splash-screen.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .splash-sparkle {
+      width: 52px;
+      height: 52px;
+      background: linear-gradient(135deg, #4285f4, #9b72cb, #d96570);
+      clip-path: polygon(50% 0%, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0% 50%, 38% 38%);
+      animation: pulseSparkle 1.3s infinite ease-in-out;
+    }
+
+    .splash-app {
+      font-size: 24px;
+      font-weight: 600;
+      color: #e3e3e3;
+    }
+
+    .splash-nahim {
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      color: #a8c7fa;
+    }
+
+    @keyframes pulseSparkle {
+      0%, 100% { transform: scale(0.92) rotate(0deg); }
+      50% { transform: scale(1.06) rotate(12deg); }
+    }
+
+    .app-shell {
+      display: flex;
+      flex-direction: column;
+      height: 100dvh;
+      width: 100%;
+      background: var(--bg-main);
+    }
+
+    .topbar {
+      height: 56px;
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      color: var(--text-main);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .icon-btn:active {
+      background: var(--bg-elevated);
+    }
+
+    .brand-title {
+      font-size: 18px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .model-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      font-size: 12.5px;
+      cursor: pointer;
+      max-width: 170px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .avatar-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: none;
+      background: linear-gradient(135deg, #5c6bc0, #26a69a);
+      color: #fff;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .main-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .greeting-box {
+      margin-top: 24px;
+      margin-bottom: 24px;
+    }
+
+    .greeting-title {
+      font-size: 32px;
+      line-height: 1.2;
+      font-weight: 500;
+      background: linear-gradient(90deg, #4285f4, #9b72cb, #d96570);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
+    }
+
+    .greeting-sub {
+      font-size: 24px;
+      color: #747775;
+      font-weight: 400;
+    }
+
+    .chips-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .chip-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 16px;
+      border-radius: 999px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      font-size: 13.5px;
+      cursor: pointer;
+    }
+
+    .chat-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .msg-row {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .msg-user {
+      align-self: flex-end;
+      max-width: 82%;
+      background: var(--bg-elevated);
+      padding: 12px 16px;
+      border-radius: 20px 20px 6px 20px;
+      font-size: 14.5px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+
+    .msg-ai {
+      align-self: flex-start;
+      width: 100%;
+      padding: 4px 2px;
+      font-size: 14.5px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+
+    .msg-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .bottom-composer-wrap {
+      padding: 8px 12px calc(12px + env(safe-area-inset-bottom));
+      background: var(--bg-main);
+      flex-shrink: 0;
+    }
+
+    .composer-capsule {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 54px;
+      padding: 6px 8px 6px 10px;
+      border-radius: 28px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .composer-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-main);
+      font-size: 15px;
+      min-width: 0;
+      padding: 6px 4px;
+    }
+
+    .composer-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .send-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: none;
+      background: var(--bg-elevated);
+      color: var(--text-muted);
+      font-size: 17px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .send-btn.active {
+      background: var(--accent-send);
+      color: #fff;
+    }
+
+    .sheet-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      z-index: 200;
+      display: none;
+      align-items: flex-end;
+    }
+
+    .sheet-backdrop.open {
+      display: flex;
+    }
+
+    .sheet-panel {
+      width: 100%;
+      max-height: 84dvh;
+      overflow-y: auto;
+      background: var(--bg-surface);
+      border-radius: 24px 24px 0 0;
+      padding: 18px 16px 28px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .sheet-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .mode-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .mode-btn {
+      padding: 9px 6px;
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-main);
+      color: var(--text-main);
+      font-size: 12.5px;
+      cursor: pointer;
+    }
+
+    .mode-btn.selected {
+      background: #1a3868;
+      border-color: var(--accent-blue);
+      color: var(--accent-blue);
+      font-weight: 600;
+    }
+
+    .group-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin: 12px 0 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    .model-item {
+      width: 100%;
+      text-align: left;
+      padding: 11px 12px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      background: var(--bg-main);
+      color: var(--text-main);
+      font-size: 13.5px;
+      margin-bottom: 6px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .model-item.selected {
+      border-color: var(--accent-blue);
+      background: #17263b;
+    }
+
+    .field-box {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .text-field {
+      width: 100%;
+      padding: 11px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-main);
+      color: var(--text-main);
+      font-size: 14px;
+    }
+
+    .primary-btn {
+      padding: 11px 14px;
+      border-radius: 999px;
+      border: none;
+      background: var(--accent-blue);
+      color: #062e6f;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .account-chip {
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: var(--bg-main);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      cursor: pointer;
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div id="splash-screen">
+    <div class="splash-sparkle"></div>
+    <div class="splash-app">Shadhin -AI</div>
+    <div class="splash-nahim">NAHIM</div>
+  </div>
+
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="icon-btn" id="newChatBtn" title="New Chat">☰</button>
+        <span class="brand-title">Shadhin -AI</span>
+        <button class="model-pill" id="modelSheetOpenBtn">
+          <span id="currentModelLabel">Gemini 2.5 Pro</span>
+          <span>•</span>
+          <span id="currentModeLabel">Auto</span>
+          <span>▾</span>
+        </button>
+      </div>
+      <button class="avatar-btn" id="accountSheetOpenBtn" title="Accounts">S</button>
+    </header>
+
+    <main class="main-area" id="mainArea">
+      <div id="homeView">
+        <div class="greeting-box">
+          <div class="greeting-title" id="greetingUser">Hello</div>
+          <div class="greeting-sub">Where should we start?</div>
+        </div>
+        <div class="chips-wrap">
+          <button class="chip-btn" data-prompt="Create an image concept">🎨 Create image</button>
+          <button class="chip-btn" data-prompt="Help me write a clear draft">✍️ Help me write</button>
+          <button class="chip-btn" data-prompt="Write clean code with explanation">💻 Write code</button>
+          <button class="chip-btn" data-prompt="Brainstorm fresh ideas">💡 Brainstorm</button>
+        </div>
+      </div>
+
+      <div class="chat-list" id="chatList" style="display: none;"></div>
+    </main>
+
+    <div class="bottom-composer-wrap">
+      <div class="composer-capsule">
+        <button class="icon-btn" id="plusBtn" title="New Chat">＋</button>
+        <input
+          type="text"
+          class="composer-input"
+          id="promptInput"
+          placeholder="Ask Shadhin -AI"
+          autocomplete="off"
+        />
+        <button class="icon-btn" id="micBtn" title="Voice Input">🎤</button>
+        <button class="send-btn" id="sendBtn" title="Send">↑</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sheet-backdrop" id="modelSheet">
+    <div class="sheet-panel">
+      <div class="sheet-title">
+        <span>Model & Mode</span>
+        <button class="icon-btn" id="closeModelSheet">✕</button>
+      </div>
+
+      <div class="mode-grid" id="modeGrid">
+        <button class="mode-btn selected" data-mode="Auto">Auto</button>
+        <button class="mode-btn" data-mode="Low">Low</button>
+        <button class="mode-btn" data-mode="Medium">Medium</button>
+        <button class="mode-btn" data-mode="High">High</button>
+      </div>
+
+      <div class="group-label">Google Models</div>
+      <div id="googleModels"></div>
+
+      <div class="group-label">Kling AI Models</div>
+      <div id="klingModels"></div>
+
+      <div class="group-label">Leonardo AI Models</div>
+      <div id="leonardoModels"></div>
+
+      <div class="group-label">Custom / Open-Source Endpoint URL</div>
+      <div class="field-box">
+        <input type="url" class="text-field" id="endpointUrlInput" placeholder="https://your-endpoint.example/v1/chat" />
+        <button class="primary-btn" id="saveEndpointBtn">Save Endpoint</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sheet-backdrop" id="accountSheet">
+    <div class="sheet-panel">
+      <div class="sheet-title">
+        <span>Accounts</span>
+        <button class="icon-btn" id="closeAccountSheet">✕</button>
+      </div>
+
+      <div class="field-box">
+        <input type="text" class="text-field" id="accNameInput" placeholder="Account name" />
+        <input type="email" class="text-field" id="accEmailInput" placeholder="Email address (optional)" />
+        <button class="primary-btn" id="addAccountBtn">Add Account</button>
+        <div class="group-label">Saved Accounts</div>
+        <div id="accountList"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      setTimeout(() => {
+        const splash = document.getElementById("splash-screen");
+        if (splash) {
+          splash.classList.add("hidden");
+          setTimeout(() => splash.remove(), 500);
+        }
+      }, 2200);
+    });
+
+    const MODELS = {
+      google: [
+        "Gemini 2.5 Pro",
+        "Gemini 2.5 Flash",
+        "Gemini 2.5 Flash-Lite",
+        "Gemini 2.0 Flash",
+        "Imagen 3",
+        "Veo 2"
+      ],
+      kling: [
+        "Kling 2.0 Master",
+        "Kling 1.6 Pro",
+        "Kling 1.6 Standard",
+        "Kolors Image"
+      ],
+      leonardo: [
+        "Leonardo Phoenix 1.0",
+        "Leonardo Kino XL",
+        "Leonardo Lightning XL",
+        "Leonardo Anime XL",
+        "Leonardo Vision XL"
+      ]
+    };
+
+    let selectedModel = "Gemini 2.5 Pro";
+    let selectedMode = "Auto";
+    let endpointUrl = localStorage.getItem("shadhin_endpoint_url") || "";
+    let accounts = JSON.parse(localStorage.getItem("shadhin_accounts") || '[{"name":"Shadhin","email":"shadhin@local.app"}]');
+    let activeAccountIndex = Number(localStorage.getItem("shadhin_active_acc") || 0);
+
+    const modelSheet = document.getElementById("modelSheet");
+    const accountSheet = document.getElementById("accountSheet");
+    const promptInput = document.getElementById("promptInput");
+    const sendBtn = document.getElementById("sendBtn");
+    const chatList = document.getElementById("chatList");
+    const homeView = document.getElementById("homeView");
+
+    function renderModelLists() {
+      const map = [
+        { id: "googleModels", items: MODELS.google },
+        { id: "klingModels", items: MODELS.kling },
+        { id: "leonardoModels", items: MODELS.leonardo }
+      ];
+
+      map.forEach(({ id, items }) => {
+        const container = document.getElementById(id);
+        container.innerHTML = "";
+        items.forEach((name) => {
+          const btn = document.createElement("button");
+          btn.className = "model-item" + (name === selectedModel ? " selected" : "");
+          btn.innerHTML = `<span>${name}</span><span>${name === selectedModel ? "✓" : ""}</span>`;
+          btn.onclick = () => {
+            selectedModel = name;
+            document.getElementById("currentModelLabel").textContent = name;
+            renderModelLists();
+            modelSheet.classList.remove("open");
+          };
+          container.appendChild(btn);
+        });
+      });
+
+      document.getElementById("endpointUrlInput").value = endpointUrl;
+    }
+
+    function renderAccounts() {
+      if (!accounts.length) {
+        accounts = [{ name: "Shadhin", email: "shadhin@local.app" }];
+      }
+      if (activeAccountIndex >= accounts.length) activeAccountIndex = 0;
+
+      const current = accounts[activeAccountIndex];
+      document.getElementById("greetingUser").textContent = `Hello, ${current.name}`;
+      document.getElementById("accountSheetOpenBtn").textContent = (current.name || "S").charAt(0).toUpperCase();
+
+      const listEl = document.getElementById("accountList");
+      listEl.innerHTML = "";
+      accounts.forEach((acc, idx) => {
+        const item = document.createElement("div");
+        item.className = "account-chip";
+        item.innerHTML = `
+          <div>
+            <div><strong>${acc.name}</strong></div>
+            <div style="color:#9aa0a6;font-size:12px;">${acc.email || "Local Account"}</div>
+          </div>
+          <span>${idx === activeAccountIndex ? "Active ✓" : "Switch"}</span>
+        `;
+        item.onclick = () => {
+          activeAccountIndex = idx;
+          localStorage.setItem("shadhin_active_acc", String(activeAccountIndex));
+          renderAccounts();
+          accountSheet.classList.remove("open");
+        };
+        listEl.appendChild(item);
+      });
+    }
+
+    document.getElementById("modelSheetOpenBtn").onclick = () => {
+      renderModelLists();
+      modelSheet.classList.add("open");
+    };
+    document.getElementById("closeModelSheet").onclick = () => modelSheet.classList.remove("open");
+    modelSheet.onclick = (e) => { if (e.target === modelSheet) modelSheet.classList.remove("open"); };
+
+    document.getElementById("saveEndpointBtn").onclick = () => {
+      endpointUrl = document.getElementById("endpointUrlInput").value.trim();
+      localStorage.setItem("shadhin_endpoint_url", endpointUrl);
+      modelSheet.classList.remove("open");
+    };
+
+    document.getElementById("accountSheetOpenBtn").onclick = () => {
+      renderAccounts();
+      accountSheet.classList.add("open");
+    };
+    document.getElementById("closeAccountSheet").onclick = () => accountSheet.classList.remove("open");
+    accountSheet.onclick = (e) => { if (e.target === accountSheet) accountSheet.classList.remove("open"); };
+
+    document.getElementById("addAccountBtn").onclick = () => {
+      const nameVal = document.getElementById("accNameInput").value.trim();
+      const emailVal = document.getElementById("accEmailInput").value.trim();
+      if (!nameVal) return;
+      accounts.push({ name: nameVal, email: emailVal || "Local Account" });
+      activeAccountIndex = accounts.length - 1;
+      localStorage.setItem("shadhin_accounts", JSON.stringify(accounts));
+      localStorage.setItem("shadhin_active_acc", String(activeAccountIndex));
+      document.getElementById("accNameInput").value = "";
+      document.getElementById("accEmailInput").value = "";
+      renderAccounts();
+    };
+
+    document.querySelectorAll("#modeGrid .mode-btn").forEach((btn) => {
+      btn.onclick = () => {
+        document.querySelectorAll("#modeGrid .mode-btn").forEach((b) => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        selectedMode = btn.dataset.mode;
+        document.getElementById("currentModeLabel").textContent = selectedMode;
+      };
+    });
+
+    promptInput.addEventListener("input", () => {
+      sendBtn.classList.toggle("active", promptInput.value.trim().length > 0);
+    });
+
+    function appendMessage(role, text, metaText = "") {
+      homeView.style.display = "none";
+      chatList.style.display = "flex";
+
+      const row = document.createElement("div");
+      row.className = "msg-row";
+
+      if (metaText) {
+        const meta = document.createElement("div");
+        meta.className = "msg-meta";
+        meta.textContent = metaText;
+        row.appendChild(meta);
+      }
+
+      const bubble = document.createElement("div");
+      bubble.className = role === "user" ? "msg-user" : "msg-ai";
+      bubble.textContent = text;
+      row.appendChild(bubble);
+
+      chatList.appendChild(row);
+      const mainArea = document.getElementById("mainArea");
+      mainArea.scrollTop = mainArea.scrollHeight;
+    }
+
+    async function sendPrompt(customText) {
+      const text = (typeof customText === "string" ? customText : promptInput.value).trim();
+      if (!text) return;
+
+      appendMessage("user", text);
+      if (typeof customText !== "string") {
+        promptInput.value = "";
+        sendBtn.classList.remove("active");
+      }
+
+      if (endpointUrl) {
+        try {
+          const res = await fetch(endpointUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              prompt: text,
+              model: selectedModel,
+              mode: selectedMode
+            })
+          });
+          const data = await res.text();
+          appendMessage("ai", data || "Empty response from endpoint.", `${selectedModel} • ${selectedMode}`);
+          return;
+        } catch (err) {
+          appendMessage("ai", `Endpoint connection error: ${err.message}`, `${selectedModel} • ${selectedMode}`);
+          return;
+        }
+      }
+
+      appendMessage(
+        "ai",
+        `Selected: ${selectedModel} (${selectedMode})\nNo custom endpoint URL set yet. Add an Open-Source or API endpoint URL inside Model & Mode to receive live responses.`,
+        `${selectedModel} • ${selectedMode}`
+      );
+    }
+
+    sendBtn.onclick = () => sendPrompt();
+    promptInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        sendPrompt();
+      }
+    });
+
+    document.querySelectorAll(".chip-btn").forEach((chip) => {
+      chip.onclick = () => sendPrompt(chip.dataset.prompt);
+    });
+
+    function resetChat() {
+      chatList.innerHTML = "";
+      chatList.style.display = "none";
+      homeView.style.display = "block";
+    }
+
+    document.getElementById("newChatBtn").onclick = resetChat;
+    document.getElementById("plusBtn").onclick = resetChat;
+
+    document.getElementById("micBtn").onclick = () => {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        appendMessage("ai", "Voice recognition is not supported on this device.");
+        return;
+      }
+      const rec = new SpeechRecognition();
+      rec.lang = "en-US";
+      rec.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        promptInput.value = transcript;
+        sendBtn.classList.toggle("active", promptInput.value.trim().length > 0);
+      };
+      rec.start();
+    };
+
+    renderAccounts();
+    renderModelLists();
+  </script>
+</body>
+</html>
