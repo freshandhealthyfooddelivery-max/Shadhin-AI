@@ -32,7 +32,7 @@
       overflow: hidden;
     }
 
-    /* Splash screen: visible only at app launch */
+    /* Splash screen: only at startup showing NAHIM */
     #splash-screen {
       position: fixed;
       inset: 0;
@@ -88,23 +88,30 @@
 
     .topbar {
       height: 56px;
-      padding: 0 12px;
+      padding: 0 10px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       flex-shrink: 0;
+      position: relative;
     }
 
     .topbar-left {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       min-width: 0;
     }
 
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
     .icon-btn {
-      width: 40px;
-      height: 40px;
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
       border: none;
       background: transparent;
@@ -112,7 +119,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 20px;
+      font-size: 19px;
       cursor: pointer;
     }
 
@@ -121,7 +128,7 @@
     }
 
     .brand-title {
-      font-size: 18px;
+      font-size: 17px;
       font-weight: 500;
       white-space: nowrap;
     }
@@ -129,15 +136,15 @@
     .model-pill {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 6px 12px;
+      gap: 5px;
+      padding: 6px 11px;
       border-radius: 999px;
       background: var(--bg-surface);
       border: 1px solid var(--border-subtle);
       color: var(--text-main);
-      font-size: 12.5px;
+      font-size: 12px;
       cursor: pointer;
-      max-width: 170px;
+      max-width: 155px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -164,44 +171,51 @@
       flex-direction: column;
     }
 
-    .greeting-box {
-      margin-top: 24px;
-      margin-bottom: 24px;
-    }
-
-    .greeting-title {
-      font-size: 32px;
-      line-height: 1.2;
-      font-weight: 500;
-      background: linear-gradient(90deg, #4285f4, #9b72cb, #d96570);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 6px;
-    }
-
-    .greeting-sub {
-      font-size: 24px;
-      color: #747775;
-      font-weight: 400;
-    }
-
-    .chips-wrap {
+    .center-hero {
+      margin: auto 0;
       display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 12px;
+      padding: 20px 8px;
     }
 
-    .chip-btn {
-      display: inline-flex;
+    .hero-sparkle {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, #4285f4, #9b72cb, #d96570);
+      clip-path: polygon(50% 0%, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0% 50%, 38% 38%);
+    }
+
+    .hero-title {
+      font-size: 24px;
+      font-weight: 500;
+      color: var(--text-main);
+    }
+
+    .hero-sub {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      max-width: 340px;
+      line-height: 1.45;
+    }
+
+    .temp-badge {
+      display: none;
       align-items: center;
       gap: 8px;
-      padding: 11px 16px;
+      padding: 6px 12px;
       border-radius: 999px;
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-main);
-      font-size: 13.5px;
-      cursor: pointer;
+      background: #2b2416;
+      border: 1px solid #8a6d3b;
+      color: #f3d08a;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .temp-badge.active {
+      display: inline-flex;
     }
 
     .chat-list {
@@ -213,7 +227,7 @@
     .msg-row {
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: 4px;
     }
 
     .msg-user {
@@ -239,6 +253,24 @@
     .msg-meta {
       font-size: 11px;
       color: var(--text-muted);
+    }
+
+    .attachment-preview {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 6px 12px;
+      margin-bottom: 6px;
+      border-radius: 14px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      font-size: 12.5px;
+      color: var(--accent-blue);
+    }
+
+    .attachment-preview.active {
+      display: flex;
     }
 
     .bottom-composer-wrap {
@@ -293,11 +325,87 @@
       color: #fff;
     }
 
+    /* Left Navigation Drawer (☰) */
+    .drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      z-index: 250;
+      display: none;
+    }
+
+    .drawer-backdrop.open {
+      display: flex;
+    }
+
+    .side-drawer {
+      width: 84%;
+      max-width: 330px;
+      height: 100%;
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border-subtle);
+      padding: 16px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      overflow-y: auto;
+    }
+
+    .drawer-nav-item {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-main);
+      font-size: 14px;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .drawer-nav-item:hover, .drawer-nav-item.active {
+      background: var(--bg-elevated);
+    }
+
+    .sub-menu-list {
+      display: none;
+      flex-direction: column;
+      padding-left: 24px;
+      gap: 4px;
+    }
+
+    .sub-menu-list.open {
+      display: flex;
+    }
+
+    .history-item {
+      width: 100%;
+      padding: 9px 12px;
+      border-radius: 10px;
+      border: none;
+      background: transparent;
+      color: var(--text-main);
+      font-size: 13px;
+      text-align: left;
+      cursor: pointer;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .history-item.active {
+      background: var(--bg-elevated);
+    }
+
+    /* Bottom Sheet & Modal */
     .sheet-backdrop {
       position: fixed;
       inset: 0;
       background: rgba(0, 0, 0, 0.65);
-      z-index: 200;
+      z-index: 220;
       display: none;
       align-items: flex-end;
     }
@@ -308,7 +416,7 @@
 
     .sheet-panel {
       width: 100%;
-      max-height: 84dvh;
+      max-height: 86dvh;
       overflow-y: auto;
       background: var(--bg-surface);
       border-radius: 24px 24px 0 0;
@@ -325,11 +433,75 @@
       align-items: center;
     }
 
+    .horizontal-cards {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 12px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .quick-source-card {
+      min-width: 92px;
+      padding: 12px 10px;
+      border-radius: 16px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-main);
+      color: var(--text-main);
+      font-size: 12.5px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .feature-row-btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 14px;
+      border: none;
+      background: transparent;
+      color: var(--text-main);
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .feature-row-btn:hover {
+      background: var(--bg-elevated);
+    }
+
+    .feature-row-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .feature-row-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .group-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin: 12px 0 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
     .mode-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 8px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
 
     .mode-btn {
@@ -349,18 +521,10 @@
       font-weight: 600;
     }
 
-    .group-label {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin: 12px 0 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-    }
-
     .model-item {
       width: 100%;
       text-align: left;
-      padding: 11px 12px;
+      padding: 10px 12px;
       border-radius: 12px;
       border: 1px solid transparent;
       background: var(--bg-main);
@@ -417,9 +581,29 @@
       cursor: pointer;
       margin-bottom: 6px;
     }
+
+    .toast-banner {
+      position: fixed;
+      bottom: 82px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-elevated);
+      color: var(--text-main);
+      border: 1px solid var(--border-subtle);
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 12.5px;
+      z-index: 400;
+      display: none;
+    }
+
+    .toast-banner.show {
+      display: block;
+    }
   </style>
 </head>
 <body>
+  <!-- Splash Screen: shows NAHIM once on launch -->
   <div id="splash-screen">
     <div class="splash-sparkle"></div>
     <div class="splash-app">Shadhin -AI</div>
@@ -429,7 +613,7 @@
   <div class="app-shell">
     <header class="topbar">
       <div class="topbar-left">
-        <button class="icon-btn" id="newChatBtn" title="New Chat">☰</button>
+        <button class="icon-btn" id="drawerOpenBtn" title="Menu">☰</button>
         <span class="brand-title">Shadhin -AI</span>
         <button class="model-pill" id="modelSheetOpenBtn">
           <span id="currentModelLabel">Gemini 2.5 Pro</span>
@@ -438,29 +622,35 @@
           <span>▾</span>
         </button>
       </div>
-      <button class="avatar-btn" id="accountSheetOpenBtn" title="Accounts">S</button>
+      <div class="topbar-right">
+        <button class="icon-btn" id="tempChatBtn" title="Temporary Chat">✎</button>
+        <button class="avatar-btn" id="accountSheetOpenBtn" title="Accounts">S</button>
+      </div>
     </header>
 
     <main class="main-area" id="mainArea">
-      <div id="homeView">
-        <div class="greeting-box">
-          <div class="greeting-title" id="greetingUser">Hello</div>
-          <div class="greeting-sub">Where should we start?</div>
-        </div>
-        <div class="chips-wrap">
-          <button class="chip-btn" data-prompt="Create an image concept">🎨 Create image</button>
-          <button class="chip-btn" data-prompt="Help me write a clear draft">✍️ Help me write</button>
-          <button class="chip-btn" data-prompt="Write clean code with explanation">💻 Write code</button>
-          <button class="chip-btn" data-prompt="Brainstorm fresh ideas">💡 Brainstorm</button>
-        </div>
+      <div class="temp-badge" id="tempBadge">
+        <span>Temporary chat active</span>
+        <button id="exitTempBtn" style="background:none;border:none;color:#f3d08a;font-weight:700;cursor:pointer;">✕</button>
+      </div>
+
+      <div class="center-hero" id="homeView">
+        <div class="hero-sparkle"></div>
+        <div class="hero-title" id="greetingUser">Hello, Shadhin</div>
+        <div class="hero-sub">Tap + for tools & attachments, or ask anything below.</div>
       </div>
 
       <div class="chat-list" id="chatList" style="display: none;"></div>
     </main>
 
+    <!-- Single Bottom Composer Bar -->
     <div class="bottom-composer-wrap">
+      <div class="attachment-preview" id="attachmentBar">
+        <span id="attachmentLabel">Attached</span>
+        <button class="icon-btn" id="clearAttachmentBtn" style="width:26px;height:26px;font-size:14px;">✕</button>
+      </div>
       <div class="composer-capsule">
-        <button class="icon-btn" id="plusBtn" title="New Chat">＋</button>
+        <button class="icon-btn" id="plusBtn" title="Add & Tools">＋</button>
         <input
           type="text"
           class="composer-input"
@@ -474,6 +664,155 @@
     </div>
   </div>
 
+  <!-- Hidden File Inputs -->
+  <input type="file" id="imagePicker" accept="image/*" style="display:none;" />
+  <input type="file" id="cameraPicker" accept="image/*" capture="environment" style="display:none;" />
+  <input type="file" id="docPicker" accept=".txt,.md,.json,.csv,.pdf,.doc,.docx" style="display:none;" />
+
+  <!-- Left Drawer (☰) -->
+  <div class="drawer-backdrop" id="historyDrawer">
+    <div class="side-drawer">
+      <div class="sheet-title">
+        <span>Shadhin -AI</span>
+        <button class="icon-btn" id="closeDrawerBtn">✕</button>
+      </div>
+
+      <button class="drawer-nav-item" id="drawerNewChatBtn">＋ <span>New chat</span></button>
+      <button class="drawer-nav-item" data-quick-action="Library">📚 <span>Library</span></button>
+      <button class="drawer-nav-item" data-quick-action="Images">🖼 <span>Images</span></button>
+      <button class="drawer-nav-item" data-quick-action="Scheduled">🗓 <span>Scheduled</span></button>
+      <button class="drawer-nav-item" data-quick-action="Students">🎓 <span>Students</span></button>
+
+      <button class="drawer-nav-item" id="moreDrawerToggle">⋯ <span>More</span></button>
+      <div class="sub-menu-list" id="moreSubMenu">
+        <button class="drawer-nav-item" data-quick-action="Customise">🎨 <span>Customise</span></button>
+        <button class="drawer-nav-item" data-quick-action="Videos">🎬 <span>Videos</span></button>
+      </div>
+
+      <div class="group-label">Notebooks</div>
+      <button class="drawer-nav-item" id="newNotebookBtn">＋ <span>New notebook</span></button>
+      <div id="notebookList"></div>
+
+      <div class="group-label">Chats</div>
+      <div id="historyList"></div>
+
+      <button class="drawer-nav-item" id="drawerAccountBtn" style="margin-top:auto;">👤 <span>Accounts & Settings</span></button>
+    </div>
+  </div>
+
+  <!-- Plus Bottom Sheet (matches video bottom sheet flow) -->
+  <div class="sheet-backdrop" id="plusSheet">
+    <div class="sheet-panel">
+      <div class="sheet-title">
+        <span>Add & Tools</span>
+        <button class="icon-btn" id="closePlusSheet">✕</button>
+      </div>
+
+      <div class="horizontal-cards">
+        <button class="quick-source-card" id="pickPhotosCard">
+          <span>🖼</span>
+          <span>Photos</span>
+        </button>
+        <button class="quick-source-card" id="pickCameraCard">
+          <span>📷</span>
+          <span>Camera</span>
+        </button>
+        <button class="quick-source-card" data-source-prompt="Create an avatar portrait style prompt">
+          <span>🧑</span>
+          <span>Avatar</span>
+        </button>
+        <button class="quick-source-card" id="pickFilesCard">
+          <span>📎</span>
+          <span>Files</span>
+        </button>
+        <button class="quick-source-card" data-source-prompt="Summarize notes from Drive">
+          <span>🔺</span>
+          <span>Drive</span>
+        </button>
+        <button class="quick-source-card" data-source-prompt="Organize study points in a notebook">
+          <span>📓</span>
+          <span>Notebooks</span>
+        </button>
+        <button class="quick-source-card" data-source-prompt="Plan a route or location guide on Map">
+          <span>📍</span>
+          <span>Map</span>
+        </button>
+      </div>
+
+      <button class="feature-row-btn" data-tool-prefix="Create image prompt: ">
+        <div class="feature-row-left">
+          <span>🎨</span>
+          <div>
+            <div><strong>Create images</strong></div>
+            <div class="feature-row-sub">Visualise and edit</div>
+          </div>
+        </div>
+      </button>
+
+      <button class="feature-row-btn" data-tool-prefix="Create video concept & storyboard: ">
+        <div class="feature-row-left">
+          <span>🎬</span>
+          <div>
+            <div><strong>Video</strong></div>
+            <div class="feature-row-sub">Generate motion & scene plan</div>
+          </div>
+        </div>
+      </button>
+
+      <button class="feature-row-btn" data-tool-prefix="Write music & lyrics idea: ">
+        <div class="feature-row-left">
+          <span>🎵</span>
+          <div>
+            <div><strong>Create music</strong></div>
+            <div class="feature-row-sub">Make audio tracks & ideas</div>
+          </div>
+        </div>
+      </button>
+
+      <button class="feature-row-btn" data-tool-prefix="Build clean code or slide structure: ">
+        <div class="feature-row-left">
+          <span>⬜</span>
+          <div>
+            <div><strong>Canvas</strong></div>
+            <div class="feature-row-sub">Code, write or make slides</div>
+          </div>
+        </div>
+      </button>
+
+      <button class="feature-row-btn" data-tool-prefix="Deep research report on: ">
+        <div class="feature-row-left">
+          <span>🔎</span>
+          <div>
+            <div><strong>Deep Research</strong></div>
+            <div class="feature-row-sub">Get detailed reports</div>
+          </div>
+        </div>
+      </button>
+
+      <button class="feature-row-btn" data-tool-prefix="Step-by-step guided learning on: ">
+        <div class="feature-row-left">
+          <span>🎓</span>
+          <div>
+            <div><strong>Guided Learning</strong></div>
+            <div class="feature-row-sub">Get step-by-step help</div>
+          </div>
+        </div>
+      </button>
+
+      <div class="feature-row-btn" id="personalizeRow">
+        <div class="feature-row-left">
+          <span>✨</span>
+          <div>
+            <div><strong>Personal Intelligence</strong></div>
+            <div class="feature-row-sub">Personalise chat preferences</div>
+          </div>
+        </div>
+        <input type="checkbox" id="personalizeToggle" checked style="width:18px;height:18px;" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Model & Mode Sheet -->
   <div class="sheet-backdrop" id="modelSheet">
     <div class="sheet-panel">
       <div class="sheet-title">
@@ -505,6 +844,7 @@
     </div>
   </div>
 
+  <!-- Account Sheet -->
   <div class="sheet-backdrop" id="accountSheet">
     <div class="sheet-panel">
       <div class="sheet-title">
@@ -521,6 +861,8 @@
       </div>
     </div>
   </div>
+
+  <div class="toast-banner" id="toastBanner"></div>
 
   <script>
     window.addEventListener("DOMContentLoaded", () => {
@@ -559,16 +901,108 @@
 
     let selectedModel = "Gemini 2.5 Pro";
     let selectedMode = "Auto";
+    let isTemporaryChat = false;
     let endpointUrl = localStorage.getItem("shadhin_endpoint_url") || "";
     let accounts = JSON.parse(localStorage.getItem("shadhin_accounts") || '[{"name":"Shadhin","email":"shadhin@local.app"}]');
     let activeAccountIndex = Number(localStorage.getItem("shadhin_active_acc") || 0);
+    let sessions = JSON.parse(localStorage.getItem("shadhin_sessions") || "[]");
+    let notebooks = JSON.parse(localStorage.getItem("shadhin_notebooks") || '["General Notes"]');
+    let currentSessionId = null;
+    let attachedFileName = "";
 
+    const historyDrawer = document.getElementById("historyDrawer");
+    const plusSheet = document.getElementById("plusSheet");
     const modelSheet = document.getElementById("modelSheet");
     const accountSheet = document.getElementById("accountSheet");
     const promptInput = document.getElementById("promptInput");
     const sendBtn = document.getElementById("sendBtn");
     const chatList = document.getElementById("chatList");
     const homeView = document.getElementById("homeView");
+    const attachmentBar = document.getElementById("attachmentBar");
+    const attachmentLabel = document.getElementById("attachmentLabel");
+    const toastBanner = document.getElementById("toastBanner");
+
+    function showToast(msg) {
+      toastBanner.textContent = msg;
+      toastBanner.classList.add("show");
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => toastBanner.classList.remove("show"), 2000);
+    }
+
+    function saveSessions() {
+      if (!isTemporaryChat) {
+        localStorage.setItem("shadhin_sessions", JSON.stringify(sessions));
+      }
+    }
+
+    function renderNotebooks() {
+      const nbEl = document.getElementById("notebookList");
+      nbEl.innerHTML = "";
+      notebooks.forEach((nb) => {
+        const btn = document.createElement("button");
+        btn.className = "history-item";
+        btn.textContent = `📓 ${nb}`;
+        btn.onclick = () => {
+          historyDrawer.classList.remove("open");
+          promptInput.value = `Work in notebook "${nb}": `;
+          promptInput.focus();
+          sendBtn.classList.add("active");
+        };
+        nbEl.appendChild(btn);
+      });
+    }
+
+    function renderHistoryList() {
+      const listEl = document.getElementById("historyList");
+      listEl.innerHTML = "";
+      if (!sessions.length) {
+        listEl.innerHTML = '<div style="color:#9aa0a6;font-size:12.5px;padding:6px 10px;">No saved chats yet</div>';
+        return;
+      }
+      sessions.slice().reverse().forEach((sess) => {
+        const btn = document.createElement("button");
+        btn.className = "history-item" + (sess.id === currentSessionId ? " active" : "");
+        btn.textContent = sess.title || "Untitled Chat";
+        btn.onclick = () => {
+          isTemporaryChat = false;
+          document.getElementById("tempBadge").classList.remove("active");
+          loadSession(sess.id);
+          historyDrawer.classList.remove("open");
+        };
+        listEl.appendChild(btn);
+      });
+    }
+
+    function loadSession(sessionId) {
+      const sess = sessions.find((s) => s.id === sessionId);
+      if (!sess) return;
+      currentSessionId = sess.id;
+      chatList.innerHTML = "";
+      if (!sess.messages || !sess.messages.length) {
+        chatList.style.display = "none";
+        homeView.style.display = "flex";
+        return;
+      }
+      homeView.style.display = "none";
+      chatList.style.display = "flex";
+      sess.messages.forEach((m) => appendMessageToDOM(m.role, m.text, m.meta));
+    }
+
+    function ensureSession(firstPrompt) {
+      if (!currentSessionId) {
+        currentSessionId = String(Date.now());
+        const newSess = {
+          id: currentSessionId,
+          title: firstPrompt.slice(0, 36),
+          messages: []
+        };
+        if (!isTemporaryChat) {
+          sessions.push(newSess);
+        }
+        return newSess;
+      }
+      return sessions.find((s) => s.id === currentSessionId) || { id: currentSessionId, title: firstPrompt.slice(0, 36), messages: [] };
+    }
 
     function renderModelLists() {
       const map = [
@@ -629,6 +1063,136 @@
       });
     }
 
+    /* Drawer controls */
+    document.getElementById("drawerOpenBtn").onclick = () => {
+      renderNotebooks();
+      renderHistoryList();
+      historyDrawer.classList.add("open");
+    };
+    document.getElementById("closeDrawerBtn").onclick = () => historyDrawer.classList.remove("open");
+    historyDrawer.onclick = (e) => { if (e.target === historyDrawer) historyDrawer.classList.remove("open"); };
+
+    document.getElementById("moreDrawerToggle").onclick = () => {
+      document.getElementById("moreSubMenu").classList.toggle("open");
+    };
+
+    document.querySelectorAll("[data-quick-action]").forEach((btn) => {
+      btn.onclick = () => {
+        const act = btn.dataset.quickAction;
+        historyDrawer.classList.remove("open");
+        promptInput.value = `${act}: `;
+        promptInput.focus();
+        sendBtn.classList.add("active");
+      };
+    });
+
+    document.getElementById("newNotebookBtn").onclick = () => {
+      const title = `Notebook ${notebooks.length + 1}`;
+      notebooks.push(title);
+      localStorage.setItem("shadhin_notebooks", JSON.stringify(notebooks));
+      renderNotebooks();
+      showToast(`Created ${title}`);
+    };
+
+    document.getElementById("drawerAccountBtn").onclick = () => {
+      historyDrawer.classList.remove("open");
+      renderAccounts();
+      accountSheet.classList.add("open");
+    };
+
+    function resetToFreshChat() {
+      currentSessionId = null;
+      chatList.innerHTML = "";
+      chatList.style.display = "none";
+      homeView.style.display = "flex";
+      historyDrawer.classList.remove("open");
+    }
+
+    document.getElementById("drawerNewChatBtn").onclick = () => {
+      isTemporaryChat = false;
+      document.getElementById("tempBadge").classList.remove("active");
+      resetToFreshChat();
+    };
+
+    /* Temporary chat button (top right) */
+    document.getElementById("tempChatBtn").onclick = () => {
+      isTemporaryChat = true;
+      currentSessionId = null;
+      chatList.innerHTML = "";
+      chatList.style.display = "none";
+      homeView.style.display = "flex";
+      document.getElementById("tempBadge").classList.add("active");
+      showToast("Temporary chat started");
+    };
+
+    document.getElementById("exitTempBtn").onclick = () => {
+      isTemporaryChat = false;
+      document.getElementById("tempBadge").classList.remove("active");
+      resetToFreshChat();
+    };
+
+    /* Plus Bottom Sheet controls */
+    document.getElementById("plusBtn").onclick = () => plusSheet.classList.add("open");
+    document.getElementById("closePlusSheet").onclick = () => plusSheet.classList.remove("open");
+    plusSheet.onclick = (e) => { if (e.target === plusSheet) plusSheet.classList.remove("open"); };
+
+    function attachFileFromInput(inputEl) {
+      const f = inputEl.files && inputEl.files[0];
+      if (!f) return;
+      attachedFileName = f.name;
+      attachmentLabel.textContent = `📎 ${f.name}`;
+      attachmentBar.classList.add("active");
+      promptInput.focus();
+    }
+
+    document.getElementById("pickPhotosCard").onclick = () => {
+      plusSheet.classList.remove("open");
+      document.getElementById("imagePicker").click();
+    };
+    document.getElementById("pickCameraCard").onclick = () => {
+      plusSheet.classList.remove("open");
+      document.getElementById("cameraPicker").click();
+    };
+    document.getElementById("pickFilesCard").onclick = () => {
+      plusSheet.classList.remove("open");
+      document.getElementById("docPicker").click();
+    };
+
+    document.getElementById("imagePicker").onchange = (e) => attachFileFromInput(e.target);
+    document.getElementById("cameraPicker").onchange = (e) => attachFileFromInput(e.target);
+    document.getElementById("docPicker").onchange = (e) => attachFileFromInput(e.target);
+
+    document.getElementById("clearAttachmentBtn").onclick = () => {
+      attachedFileName = "";
+      ["imagePicker", "cameraPicker", "docPicker"].forEach((id) => {
+        document.getElementById(id).value = "";
+      });
+      attachmentBar.classList.remove("active");
+    };
+
+    document.querySelectorAll("[data-source-prompt]").forEach((card) => {
+      card.onclick = () => {
+        plusSheet.classList.remove("open");
+        promptInput.value = `${card.dataset.sourcePrompt}: `;
+        promptInput.focus();
+        sendBtn.classList.add("active");
+      };
+    });
+
+    document.querySelectorAll("[data-tool-prefix]").forEach((row) => {
+      row.onclick = () => {
+        plusSheet.classList.remove("open");
+        promptInput.value = row.dataset.toolPrefix;
+        promptInput.focus();
+        sendBtn.classList.add("active");
+      };
+    });
+
+    document.getElementById("personalizeToggle").onchange = (e) => {
+      showToast(e.target.checked ? "Personal Intelligence enabled" : "Personal Intelligence off");
+    };
+
+    /* Model & Account sheets */
     document.getElementById("modelSheetOpenBtn").onclick = () => {
       renderModelLists();
       modelSheet.classList.add("open");
@@ -640,6 +1204,7 @@
       endpointUrl = document.getElementById("endpointUrlInput").value.trim();
       localStorage.setItem("shadhin_endpoint_url", endpointUrl);
       modelSheet.classList.remove("open");
+      showToast("Endpoint saved");
     };
 
     document.getElementById("accountSheetOpenBtn").onclick = () => {
@@ -660,6 +1225,7 @@
       document.getElementById("accNameInput").value = "";
       document.getElementById("accEmailInput").value = "";
       renderAccounts();
+      showToast("Account added");
     };
 
     document.querySelectorAll("#modeGrid .mode-btn").forEach((btn) => {
@@ -672,10 +1238,10 @@
     });
 
     promptInput.addEventListener("input", () => {
-      sendBtn.classList.toggle("active", promptInput.value.trim().length > 0);
+      sendBtn.classList.toggle("active", promptInput.value.trim().length > 0 || Boolean(attachedFileName));
     });
 
-    function appendMessage(role, text, metaText = "") {
+    function appendMessageToDOM(role, text, metaText = "") {
       homeView.style.display = "none";
       chatList.style.display = "flex";
 
@@ -699,11 +1265,34 @@
       mainArea.scrollTop = mainArea.scrollHeight;
     }
 
+    function recordMessage(role, text, metaText = "") {
+      const sess = ensureSession(text);
+      sess.messages.push({ role, text, meta: metaText });
+      if (!isTemporaryChat) {
+        const idx = sessions.findIndex((s) => s.id === sess.id);
+        if (idx === -1) sessions.push(sess);
+        saveSessions();
+      }
+      appendMessageToDOM(role, text, metaText);
+    }
+
     async function sendPrompt(customText) {
-      const text = (typeof customText === "string" ? customText : promptInput.value).trim();
+      let text = (typeof customText === "string" ? customText : promptInput.value).trim();
+      if (!text && attachedFileName) {
+        text = `Analyze attached file: ${attachedFileName}`;
+      }
       if (!text) return;
 
-      appendMessage("user", text);
+      const userDisplay = attachedFileName ? `${text}\n[Attached: ${attachedFileName}]` : text;
+      recordMessage("user", userDisplay);
+
+      const fileUsed = attachedFileName;
+      attachedFileName = "";
+      ["imagePicker", "cameraPicker", "docPicker"].forEach((id) => {
+        document.getElementById(id).value = "";
+      });
+      attachmentBar.classList.remove("active");
+
       if (typeof customText !== "string") {
         promptInput.value = "";
         sendBtn.classList.remove("active");
@@ -717,21 +1306,23 @@
             body: JSON.stringify({
               prompt: text,
               model: selectedModel,
-              mode: selectedMode
+              mode: selectedMode,
+              temporary: isTemporaryChat,
+              attachment: fileUsed || null
             })
           });
           const data = await res.text();
-          appendMessage("ai", data || "Empty response from endpoint.", `${selectedModel} • ${selectedMode}`);
+          recordMessage("ai", data || "Empty response from endpoint.", `${selectedModel} • ${selectedMode}`);
           return;
         } catch (err) {
-          appendMessage("ai", `Endpoint connection error: ${err.message}`, `${selectedModel} • ${selectedMode}`);
+          recordMessage("ai", `Endpoint error: ${err.message}`, `${selectedModel} • ${selectedMode}`);
           return;
         }
       }
 
-      appendMessage(
+      recordMessage(
         "ai",
-        `Selected: ${selectedModel} (${selectedMode})\nNo custom endpoint URL set yet. Add an Open-Source or API endpoint URL inside Model & Mode to receive live responses.`,
+        `Model: ${selectedModel} | Mode: ${selectedMode}${isTemporaryChat ? " | Temporary" : ""}\nPrompt: "${text}"${fileUsed ? `\nFile: ${fileUsed}` : ""}\n\nConfigure an endpoint URL in Model & Mode for live responses.`,
         `${selectedModel} • ${selectedMode}`
       );
     }
@@ -744,37 +1335,37 @@
       }
     });
 
-    document.querySelectorAll(".chip-btn").forEach((chip) => {
-      chip.onclick = () => sendPrompt(chip.dataset.prompt);
-    });
-
-    function resetChat() {
-      chatList.innerHTML = "";
-      chatList.style.display = "none";
-      homeView.style.display = "block";
-    }
-
-    document.getElementById("newChatBtn").onclick = resetChat;
-    document.getElementById("plusBtn").onclick = resetChat;
-
     document.getElementById("micBtn").onclick = () => {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SpeechRecognition) {
-        appendMessage("ai", "Voice recognition is not supported on this device.");
+        promptInput.focus();
+        showToast("Tap input & use keyboard voice typing");
         return;
       }
-      const rec = new SpeechRecognition();
-      rec.lang = "en-US";
-      rec.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        promptInput.value = transcript;
-        sendBtn.classList.toggle("active", promptInput.value.trim().length > 0);
-      };
-      rec.start();
+      try {
+        const rec = new SpeechRecognition();
+        rec.lang = "bn-BD";
+        rec.interimResults = false;
+        rec.onresult = (event) => {
+          const transcript = event.results[0][0].transcript;
+          promptInput.value = transcript;
+          sendBtn.classList.toggle("active", promptInput.value.trim().length > 0);
+          promptInput.focus();
+        };
+        rec.onerror = () => {
+          promptInput.focus();
+          showToast("Voice input fallback: use keyboard mic");
+        };
+        rec.start();
+      } catch (e) {
+        promptInput.focus();
+      }
     };
 
     renderAccounts();
     renderModelLists();
+    renderNotebooks();
+    renderHistoryList();
   </script>
 </body>
 </html>
