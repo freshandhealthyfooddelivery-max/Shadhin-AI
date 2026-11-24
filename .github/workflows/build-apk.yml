@@ -31,11 +31,11 @@ jobs:
       - name: Add Android platform
         run: |
           if [ ! -d "android" ]; then
-            npx cap add android
+            npx --yes @capacitor/cli add android
           fi
 
       - name: Sync web files to Android
-        run: npx cap sync android
+        run: npx --yes @capacitor/cli sync android
 
       - name: Build Debug APK
         run: |
