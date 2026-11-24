@@ -1,0 +1,14 @@
+{
+  "name": "shadhin-ai",
+  "version": "1.0.0",
+  "description": "Open-source Shadhin -AI Android app",
+  "license": "MIT",
+  "main": "www/index.html",
+  "scripts": {
+    "build": "echo 'Ready'"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.1.2",
+    "@capacitor/core": "^6.1.2"
+  }
+}
