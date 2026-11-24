@@ -1,0 +1,8 @@
+{
+  "appId": "com.nahim.shadhinai",
+  "appName": "Shadhin -AI",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}
