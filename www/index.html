@@ -6,14 +6,15 @@
   <title>Shadhin -AI</title>
   <style>
     :root {
-      --bg-main: #131314;
-      --bg-surface: #1e1f20;
-      --bg-elevated: #282a2c;
-      --text-main: #e3e3e3;
+      --bg-main: #0e0f12;
+      --bg-surface: #1b1c1f;
+      --bg-elevated: #26282c;
+      --bg-card: #17181b;
+      --text-main: #e8eaed;
       --text-muted: #9aa0a6;
-      --border-subtle: rgba(255, 255, 255, 0.12);
+      --border-subtle: rgba(255, 255, 255, 0.11);
       --accent-blue: #a8c7fa;
-      --accent-send: #4c8df6;
+      --accent-primary: #4c8df6;
     }
 
     * {
@@ -26,18 +27,18 @@
     html, body {
       width: 100%;
       height: 100%;
-      background: var(--bg-main);
+      background: radial-gradient(circle at 50% 25%, #161b2e 0%, #0e0f12 65%);
       color: var(--text-main);
       font-family: "Google Sans", Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       overflow: hidden;
     }
 
-    /* Splash screen: only at startup showing NAHIM */
+    /* Splash Screen: shows NAHIM once on launch */
     #splash-screen {
       position: fixed;
       inset: 0;
       z-index: 9999;
-      background: #131314;
+      background: #0e0f12;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -52,38 +53,32 @@
       pointer-events: none;
     }
 
-    .splash-sparkle {
-      width: 52px;
-      height: 52px;
-      background: linear-gradient(135deg, #4285f4, #9b72cb, #d96570);
-      clip-path: polygon(50% 0%, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0% 50%, 38% 38%);
-      animation: pulseSparkle 1.3s infinite ease-in-out;
+    .sparkle-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #4285f4, #34a853, #fbbc05, #ea4335);
+      clip-path: polygon(50% 0%, 63% 37%, 100% 50%, 63% 63%, 50% 100%, 37% 63%, 0% 50%, 37% 37%);
     }
 
-    .splash-app {
+    .splash-title {
       font-size: 24px;
       font-weight: 600;
-      color: #e3e3e3;
+      color: #fff;
     }
 
-    .splash-nahim {
+    .splash-sub {
       font-size: 16px;
+      letter-spacing: 2.5px;
+      color: var(--accent-blue);
       font-weight: 500;
-      letter-spacing: 2px;
-      color: #a8c7fa;
     }
 
-    @keyframes pulseSparkle {
-      0%, 100% { transform: scale(0.92) rotate(0deg); }
-      50% { transform: scale(1.06) rotate(12deg); }
-    }
-
+    /* Shell */
     .app-shell {
       display: flex;
       flex-direction: column;
       height: 100dvh;
       width: 100%;
-      background: var(--bg-main);
     }
 
     .topbar {
@@ -94,19 +89,14 @@
       justify-content: space-between;
       flex-shrink: 0;
       position: relative;
+      z-index: 20;
     }
 
-    .topbar-left {
+    .topbar-left, .topbar-right {
       display: flex;
       align-items: center;
       gap: 6px;
       min-width: 0;
-    }
-
-    .topbar-right {
-      display: flex;
-      align-items: center;
-      gap: 6px;
     }
 
     .icon-btn {
@@ -121,33 +111,45 @@
       justify-content: center;
       font-size: 19px;
       cursor: pointer;
+      flex-shrink: 0;
     }
 
     .icon-btn:active {
       background: var(--bg-elevated);
     }
 
-    .brand-title {
-      font-size: 17px;
-      font-weight: 500;
-      white-space: nowrap;
-    }
-
-    .model-pill {
+    .model-trigger {
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      padding: 6px 11px;
+      padding: 6px 10px;
       border-radius: 999px;
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
+      border: none;
+      background: transparent;
       color: var(--text-main);
-      font-size: 12px;
+      font-size: 15px;
+      font-weight: 500;
       cursor: pointer;
-      max-width: 155px;
+      max-width: 165px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+
+    .model-trigger:active {
+      background: var(--bg-surface);
+    }
+
+    .api-pill-btn {
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: #1a2639;
+      color: var(--accent-blue);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
     }
 
     .avatar-btn {
@@ -155,7 +157,7 @@
       height: 34px;
       border-radius: 50%;
       border: none;
-      background: linear-gradient(135deg, #5c6bc0, #26a69a);
+      background: #5c6bc0;
       color: #fff;
       font-weight: 600;
       font-size: 14px;
@@ -163,61 +165,215 @@
       flex-shrink: 0;
     }
 
+    /* Model Popover Menu (matches 01:29) */
+    .model-popover {
+      position: fixed;
+      top: 54px;
+      left: 16px;
+      right: 16px;
+      max-width: 390px;
+      max-height: 76dvh;
+      overflow-y: auto;
+      background: #202124;
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 12px;
+      z-index: 300;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.65);
+      display: none;
+    }
+
+    .model-popover.open {
+      display: block;
+    }
+
+    .mode-pills-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .mode-pill-btn {
+      padding: 8px 4px;
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-card);
+      color: var(--text-main);
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .mode-pill-btn.active {
+      background: #1c355e;
+      border-color: var(--accent-blue);
+      color: var(--accent-blue);
+      font-weight: 600;
+    }
+
+    .pop-section-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin: 10px 4px 6px;
+    }
+
+    .pop-option {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-main);
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13.5px;
+    }
+
+    .pop-option:hover, .pop-option.selected {
+      background: var(--bg-elevated);
+    }
+
+    /* Main Workspace Views */
     .main-area {
       flex: 1;
       overflow-y: auto;
-      padding: 16px;
+      padding: 12px 16px 18px;
       display: flex;
       flex-direction: column;
     }
 
-    .center-hero {
+    .view-section {
+      display: none;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .view-section.active {
+      display: flex;
+    }
+
+    /* Home View (matches 00:00 - 00:04) */
+    .home-center {
+      margin: auto 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 14px;
+    }
+
+    .hero-greeting {
+      font-size: 26px;
+      line-height: 1.28;
+      font-weight: 400;
+      color: #f1f3f4;
+      max-width: 330px;
+    }
+
+    .suggestion-list {
+      width: 100%;
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-top: 16px;
+    }
+
+    .suggestion-row {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: none;
+      background: transparent;
+      color: var(--text-main);
+      font-size: 14px;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .suggestion-row:active {
+      background: var(--bg-surface);
+    }
+
+    /* Temporary Chat View (matches 01:36) */
+    .temp-center {
       margin: auto 0;
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
       gap: 12px;
-      padding: 20px 8px;
+      padding: 20px;
     }
 
-    .hero-sparkle {
-      width: 28px;
-      height: 28px;
-      background: linear-gradient(135deg, #4285f4, #9b72cb, #d96570);
-      clip-path: polygon(50% 0%, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0% 50%, 38% 38%);
-    }
-
-    .hero-title {
-      font-size: 24px;
+    /* Sub-pages: Library, Images, Scheduled, Students, Customise */
+    .page-heading {
+      font-size: 20px;
       font-weight: 500;
-      color: var(--text-main);
+      margin-bottom: 14px;
     }
 
-    .hero-sub {
-      font-size: 13.5px;
+    .card-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+
+    .template-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .template-tile {
+      border-radius: 18px;
+      padding: 16px 12px;
+      min-height: 125px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      font-weight: 600;
+      font-size: 15px;
+      color: #fff;
+      cursor: pointer;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .tabs-bar {
+      display: flex;
+      gap: 16px;
+      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: 14px;
+    }
+
+    .tab-btn {
+      padding: 8px 4px;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
       color: var(--text-muted);
-      max-width: 340px;
-      line-height: 1.45;
+      font-size: 14px;
+      cursor: pointer;
     }
 
-    .temp-badge {
-      display: none;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 12px;
-      border-radius: 999px;
-      background: #2b2416;
-      border: 1px solid #8a6d3b;
-      color: #f3d08a;
-      font-size: 12px;
-      margin-bottom: 8px;
+    .tab-btn.active {
+      color: var(--text-main);
+      border-bottom-color: var(--accent-blue);
+      font-weight: 600;
     }
 
-    .temp-badge.active {
-      display: inline-flex;
-    }
-
+    /* Chat Messages */
     .chat-list {
       display: flex;
       flex-direction: column;
@@ -234,7 +390,7 @@
       align-self: flex-end;
       max-width: 82%;
       background: var(--bg-elevated);
-      padding: 12px 16px;
+      padding: 11px 15px;
       border-radius: 20px 20px 6px 20px;
       font-size: 14.5px;
       line-height: 1.5;
@@ -255,11 +411,17 @@
       color: var(--text-muted);
     }
 
-    .attachment-preview {
+    /* Bottom Composer (matches 00:00 & 00:25 Live waveform bar) */
+    .bottom-wrap {
+      padding: 6px 12px calc(12px + env(safe-area-inset-bottom));
+      background: transparent;
+      flex-shrink: 0;
+    }
+
+    .attachment-pill {
       display: none;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
       padding: 6px 12px;
       margin-bottom: 6px;
       border-radius: 14px;
@@ -269,22 +431,16 @@
       color: var(--accent-blue);
     }
 
-    .attachment-preview.active {
+    .attachment-pill.active {
       display: flex;
     }
 
-    .bottom-composer-wrap {
-      padding: 8px 12px calc(12px + env(safe-area-inset-bottom));
-      background: var(--bg-main);
-      flex-shrink: 0;
-    }
-
-    .composer-capsule {
+    .composer-pill {
       display: flex;
       align-items: center;
       gap: 6px;
       min-height: 54px;
-      padding: 6px 8px 6px 10px;
+      padding: 6px 8px;
       border-radius: 28px;
       background: var(--bg-surface);
       border: 1px solid var(--border-subtle);
@@ -305,14 +461,14 @@
       color: var(--text-muted);
     }
 
-    .send-btn {
+    .live-wave-btn {
       width: 38px;
       height: 38px;
       border-radius: 50%;
       border: none;
-      background: var(--bg-elevated);
-      color: var(--text-muted);
-      font-size: 17px;
+      background: #1d2b4d;
+      color: var(--accent-blue);
+      font-size: 15px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -320,337 +476,472 @@
       flex-shrink: 0;
     }
 
-    .send-btn.active {
-      background: var(--accent-send);
+    .send-arrow-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: none;
+      background: var(--accent-primary);
       color: #fff;
+      font-size: 17px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
     }
 
-    /* Left Navigation Drawer (☰) */
-    .drawer-backdrop {
+    .send-arrow-btn.visible {
+      display: inline-flex;
+    }
+
+    /* Live Voice Bar (matches 00:25) */
+    .live-bar {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 54px;
+      padding: 6px 10px;
+      border-radius: 28px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .live-bar.active {
+      display: flex;
+    }
+
+    .wave-dots {
+      letter-spacing: 4px;
+      color: var(--accent-blue);
+      font-size: 14px;
+      animation: wavePulse 1s infinite alternate;
+    }
+
+    @keyframes wavePulse {
+      from { opacity: 0.4; }
+      to { opacity: 1; }
+    }
+
+    /* Full-height Navigation Drawer (matches 00:33 - 01:26) */
+    .drawer-overlay {
       position: fixed;
       inset: 0;
       background: rgba(0, 0, 0, 0.65);
-      z-index: 250;
+      z-index: 350;
       display: none;
     }
 
-    .drawer-backdrop.open {
+    .drawer-overlay.open {
       display: flex;
     }
 
-    .side-drawer {
-      width: 84%;
-      max-width: 330px;
+    .nav-drawer {
+      width: 86%;
+      max-width: 340px;
       height: 100%;
-      background: var(--bg-surface);
+      background: #141518;
       border-right: 1px solid var(--border-subtle);
-      padding: 16px 14px;
+      padding: 14px 12px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 4px;
       overflow-y: auto;
     }
 
-    .drawer-nav-item {
+    .drawer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 6px 10px;
+    }
+
+    .drawer-item {
       width: 100%;
-      padding: 10px 12px;
-      border-radius: 12px;
+      padding: 11px 12px;
+      border-radius: 999px;
       border: none;
       background: transparent;
       color: var(--text-main);
       font-size: 14px;
       text-align: left;
-      cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
+      cursor: pointer;
     }
 
-    .drawer-nav-item:hover, .drawer-nav-item.active {
-      background: var(--bg-elevated);
+    .drawer-item.active, .drawer-item:active {
+      background: #252830;
     }
 
-    .sub-menu-list {
+    .more-group {
       display: none;
       flex-direction: column;
-      padding-left: 24px;
-      gap: 4px;
+      padding-left: 16px;
     }
 
-    .sub-menu-list.open {
+    .more-group.open {
       display: flex;
     }
 
-    .history-item {
+    .history-row {
       width: 100%;
-      padding: 9px 12px;
+      padding: 10px 12px;
       border-radius: 10px;
       border: none;
       background: transparent;
       color: var(--text-main);
-      font-size: 13px;
+      font-size: 13.5px;
       text-align: left;
-      cursor: pointer;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      cursor: pointer;
     }
 
-    .history-item.active {
+    .history-row:active {
       background: var(--bg-elevated);
     }
 
-    /* Bottom Sheet & Modal */
-    .sheet-backdrop {
+    .drawer-footer {
+      margin-top: auto;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    /* Bottom Sheet (matches 00:05 - 00:20) */
+    .sheet-overlay {
       position: fixed;
       inset: 0;
       background: rgba(0, 0, 0, 0.65);
-      z-index: 220;
+      z-index: 360;
       display: none;
       align-items: flex-end;
     }
 
-    .sheet-backdrop.open {
+    .sheet-overlay.open {
       display: flex;
     }
 
-    .sheet-panel {
+    .bottom-sheet {
       width: 100%;
-      max-height: 86dvh;
+      max-height: 85dvh;
       overflow-y: auto;
-      background: var(--bg-surface);
-      border-radius: 24px 24px 0 0;
-      padding: 18px 16px 28px;
+      background: #1e1f22;
+      border-radius: 26px 26px 0 0;
+      padding: 12px 16px 28px;
       border-top: 1px solid var(--border-subtle);
     }
 
-    .sheet-title {
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    .sheet-handle {
+      width: 36px;
+      height: 4px;
+      border-radius: 2px;
+      background: #5f6368;
+      margin: 0 auto 14px;
     }
 
-    .horizontal-cards {
+    .source-scroller {
       display: flex;
       gap: 10px;
       overflow-x: auto;
-      padding-bottom: 12px;
-      margin-bottom: 10px;
+      padding-bottom: 14px;
+      margin-bottom: 8px;
       border-bottom: 1px solid var(--border-subtle);
     }
 
-    .quick-source-card {
-      min-width: 92px;
-      padding: 12px 10px;
-      border-radius: 16px;
+    .source-card {
+      min-width: 88px;
+      padding: 14px 10px;
+      border-radius: 18px;
       border: 1px solid var(--border-subtle);
-      background: var(--bg-main);
+      background: #282a2e;
       color: var(--text-main);
       font-size: 12.5px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       cursor: pointer;
       flex-shrink: 0;
     }
 
-    .feature-row-btn {
+    .tool-row {
       width: 100%;
-      padding: 12px;
-      border-radius: 14px;
+      padding: 12px 6px;
       border: none;
       background: transparent;
       color: var(--text-main);
-      text-align: left;
-      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
+      text-align: left;
+      cursor: pointer;
     }
 
-    .feature-row-btn:hover {
-      background: var(--bg-elevated);
-    }
-
-    .feature-row-left {
+    .tool-row-left {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
     }
 
-    .feature-row-sub {
+    .tool-sub {
       font-size: 12px;
       color: var(--text-muted);
       margin-top: 2px;
     }
 
-    .group-label {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin: 12px 0 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-    }
-
-    .mode-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      margin-bottom: 14px;
-    }
-
-    .mode-btn {
-      padding: 9px 6px;
-      border-radius: 12px;
-      border: 1px solid var(--border-subtle);
-      background: var(--bg-main);
-      color: var(--text-main);
-      font-size: 12.5px;
-      cursor: pointer;
-    }
-
-    .mode-btn.selected {
-      background: #1a3868;
-      border-color: var(--accent-blue);
-      color: var(--accent-blue);
-      font-weight: 600;
-    }
-
-    .model-item {
-      width: 100%;
-      text-align: left;
-      padding: 10px 12px;
-      border-radius: 12px;
-      border: 1px solid transparent;
-      background: var(--bg-main);
-      color: var(--text-main);
-      font-size: 13.5px;
-      margin-bottom: 6px;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .model-item.selected {
-      border-color: var(--accent-blue);
-      background: #17263b;
-    }
-
-    .field-box {
-      display: flex;
+    /* Full Account & Custom Model Link Modal (matches 01:41 - 01:53) */
+    .full-modal {
+      position: fixed;
+      inset: 0;
+      background: #141518;
+      z-index: 400;
+      display: none;
       flex-direction: column;
-      gap: 10px;
+      padding: 14px 16px 24px;
+      overflow-y: auto;
     }
 
-    .text-field {
+    .full-modal.open {
+      display: flex;
+    }
+
+    .account-card {
+      background: #1e1f23;
+      border-radius: 20px;
+      padding: 14px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .input-box {
       width: 100%;
       padding: 11px 12px;
       border-radius: 12px;
       border: 1px solid var(--border-subtle);
-      background: var(--bg-main);
+      background: #121316;
       color: var(--text-main);
-      font-size: 14px;
+      font-size: 13.5px;
+      margin-top: 8px;
     }
 
-    .primary-btn {
-      padding: 11px 14px;
+    .btn-primary {
+      width: 100%;
+      padding: 11px;
       border-radius: 999px;
       border: none;
       background: var(--accent-blue);
       color: #062e6f;
       font-weight: 600;
       font-size: 14px;
+      margin-top: 10px;
       cursor: pointer;
     }
 
-    .account-chip {
-      padding: 10px 12px;
-      border-radius: 12px;
-      background: var(--bg-main);
-      border: 1px solid var(--border-subtle);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 13px;
-      cursor: pointer;
-      margin-bottom: 6px;
-    }
-
-    .toast-banner {
+    .toast {
       position: fixed;
-      bottom: 82px;
+      bottom: 84px;
       left: 50%;
       transform: translateX(-50%);
-      background: var(--bg-elevated);
-      color: var(--text-main);
-      border: 1px solid var(--border-subtle);
-      padding: 8px 14px;
+      background: #2b2d31;
+      color: #fff;
+      padding: 8px 16px;
       border-radius: 999px;
       font-size: 12.5px;
-      z-index: 400;
+      z-index: 500;
       display: none;
     }
 
-    .toast-banner.show {
+    .toast.show {
       display: block;
     }
   </style>
 </head>
 <body>
-  <!-- Splash Screen: shows NAHIM once on launch -->
+  <!-- Splash Screen: shows NAHIM once -->
   <div id="splash-screen">
-    <div class="splash-sparkle"></div>
-    <div class="splash-app">Shadhin -AI</div>
-    <div class="splash-nahim">NAHIM</div>
+    <div class="sparkle-icon"></div>
+    <div class="splash-title">Shadhin -AI</div>
+    <div class="splash-sub">NAHIM</div>
   </div>
 
   <div class="app-shell">
+    <!-- Top Header Bar -->
     <header class="topbar">
       <div class="topbar-left">
-        <button class="icon-btn" id="drawerOpenBtn" title="Menu">☰</button>
-        <span class="brand-title">Shadhin -AI</span>
-        <button class="model-pill" id="modelSheetOpenBtn">
-          <span id="currentModelLabel">Gemini 2.5 Pro</span>
-          <span>•</span>
-          <span id="currentModeLabel">Auto</span>
+        <button class="icon-btn" id="openDrawerBtn" title="Menu">☰</button>
+        <button class="model-trigger" id="modelPopoverBtn">
+          <span id="topModelLabel">Shadhin Auto</span>
           <span>▾</span>
         </button>
       </div>
       <div class="topbar-right">
-        <button class="icon-btn" id="tempChatBtn" title="Temporary Chat">✎</button>
-        <button class="avatar-btn" id="accountSheetOpenBtn" title="Accounts">S</button>
+        <button class="icon-btn" id="tempChatToggleBtn" title="Temporary Chat">✎</button>
+        <button class="api-pill-btn" id="openApiSetupBtn">Model Link</button>
+        <button class="avatar-btn" id="openAccountModalBtn">S</button>
       </div>
     </header>
 
+    <!-- Model & Mode Popover (01:29) -->
+    <div class="model-popover" id="modelPopover">
+      <div class="mode-pills-row" id="modeRow">
+        <button class="mode-pill-btn active" data-mode="Auto">Auto</button>
+        <button class="mode-pill-btn" data-mode="Low">Low</button>
+        <button class="mode-pill-btn" data-mode="Medium">Medium</button>
+        <button class="mode-pill-btn" data-mode="High">High</button>
+      </div>
+
+      <div class="pop-section-label">Google Models</div>
+      <div id="googleModelList"></div>
+
+      <div class="pop-section-label">Kling AI Models</div>
+      <div id="klingModelList"></div>
+
+      <div class="pop-section-label">Leonardo AI Models</div>
+      <div id="leonardoModelList"></div>
+
+      <div class="pop-section-label">Custom Added Models</div>
+      <div id="customModelList"></div>
+    </div>
+
+    <!-- Main Dynamic Workspace -->
     <main class="main-area" id="mainArea">
-      <div class="temp-badge" id="tempBadge">
-        <span>Temporary chat active</span>
-        <button id="exitTempBtn" style="background:none;border:none;color:#f3d08a;font-weight:700;cursor:pointer;">✕</button>
-      </div>
+      <!-- 1. Home View (00:00) -->
+      <section class="view-section active" id="viewHome">
+        <div class="home-center">
+          <div class="sparkle-icon"></div>
+          <div class="hero-greeting" id="heroGreeting">Hi Shadhin, what's on your mind?</div>
+        </div>
+        <div class="suggestion-list">
+          <button class="suggestion-row" data-prompt="Translate essential Bengali phrases">
+            <span>📖</span><span>Translate essential Bengali phrases</span>
+          </button>
+          <button class="suggestion-row" data-prompt="Find the subject that I'm best at">
+            <span>👤</span><span>Find the subject that I'm best at</span>
+          </button>
+          <button class="suggestion-row" data-prompt="Tell me if a product is worth it">
+            <span>↪</span><span>Tell me if a product is worth it</span>
+          </button>
+        </div>
+      </section>
 
-      <div class="center-hero" id="homeView">
-        <div class="hero-sparkle"></div>
-        <div class="hero-title" id="greetingUser">Hello, Shadhin</div>
-        <div class="hero-sub">Tap + for tools & attachments, or ask anything below.</div>
-      </div>
+      <!-- 2. Chat View -->
+      <section class="view-section" id="viewChat">
+        <div class="chat-list" id="chatList"></div>
+      </section>
 
-      <div class="chat-list" id="chatList" style="display: none;"></div>
+      <!-- 3. Temporary Chat View (01:36) -->
+      <section class="view-section" id="viewTemp">
+        <div class="temp-center">
+          <div style="font-size:32px;">💬</div>
+          <div class="hero-greeting" style="font-size:24px;">Just stopping by?</div>
+          <div style="font-size:13.5px;color:#9aa0a6;max-width:320px;line-height:1.5;">
+            Temporary chats don't appear in recent chats and aren't saved to history.
+          </div>
+          <button class="api-pill-btn" id="closeTempViewBtn" style="margin-top:8px;">✕ Exit Temporary Chat</button>
+        </div>
+      </section>
+
+      <!-- 4. Library View (00:44) -->
+      <section class="view-section" id="viewLibrary">
+        <div class="page-heading">Library</div>
+        <div class="pop-section-label">Documents</div>
+        <div id="libraryDocsList"></div>
+        <div class="pop-section-label">Media</div>
+        <div class="card-box" id="libraryMediaBox" style="text-align:center;color:#9aa0a6;padding:28px 14px;">
+          Images, videos and music that you create will appear here
+        </div>
+      </section>
+
+      <!-- 5. Images Templates View (00:50) -->
+      <section class="view-section" id="viewImages">
+        <div class="home-center" style="margin:12px 0 16px;">
+          <div style="font-size:26px;">🖼</div>
+          <div class="hero-greeting" style="font-size:21px;">Try a template or describe an idea in chat</div>
+        </div>
+        <div class="template-grid">
+          <div class="template-tile" style="background:linear-gradient(135deg,#2c3e50,#4ca1af);" data-tpl="Create a studio portrait headshot">Headshot</div>
+          <div class="template-tile" style="background:linear-gradient(135deg,#1f4037,#99f2c8);" data-tpl="Create a cinematic sports coach scene">Coach</div>
+          <div class="template-tile" style="background:linear-gradient(135deg,#833ab4,#fd1d1d);" data-tpl="Create a colorful arcade claw machine illustration">Claw</div>
+          <div class="template-tile" style="background:linear-gradient(135deg,#ff9a9e,#fecfef);color:#1a1a1a;" data-tpl="Create a soft pastel anime art illustration">Pastel</div>
+          <div class="template-tile" style="background:linear-gradient(135deg,#c79081,#dfa579);" data-tpl="Create a custom illustrated coffee mug design">Mug</div>
+          <div class="template-tile" style="background:linear-gradient(135deg,#3a1c71,#d76d77);" data-tpl="Create a retro 90s sitcom living room scene">Sitcom</div>
+        </div>
+      </section>
+
+      <!-- 6. Scheduled View (00:55) -->
+      <section class="view-section" id="viewScheduled">
+        <div class="page-heading">Scheduled</div>
+        <div style="font-size:13px;color:#9aa0a6;margin-bottom:14px;">
+          Let Shadhin -AI handle routines, track updates and take action for you.
+        </div>
+        <div class="pop-section-label">Suggested</div>
+        <div class="card-box" data-prompt="Create a daily news digest on topics I care about">
+          <strong>Create a news digest</strong>
+          <div class="tool-sub">Get a daily deep dive on any topic I'm curious about.</div>
+        </div>
+        <div class="card-box" data-prompt="Build a study quiz on subjects I'm learning">
+          <strong>Build a study quiz</strong>
+          <div class="tool-sub">Test my knowledge daily with questions on subjects I'm learning.</div>
+        </div>
+        <div class="card-box" data-prompt="Track weekly market trends and financial news">
+          <strong>Track financial trends</strong>
+          <div class="tool-sub">Summarize weekly market trends and news in sectors I follow.</div>
+        </div>
+        <div class="card-box" data-prompt="Create a weekly meal plan and grocery list">
+          <strong>Create a meal plan</strong>
+          <div class="tool-sub">Set up a weekly meal plan and grocery list for my household.</div>
+        </div>
+      </section>
+
+      <!-- 7. Students View (01:00) -->
+      <section class="view-section" id="viewStudents">
+        <div class="page-heading" style="text-align:center;">Level up your studying</div>
+        <div class="template-grid" style="margin-bottom:14px;">
+          <div class="card-box" data-prompt="Help me organize class materials to study smarter">
+            <strong>Add class materials</strong>
+            <div class="tool-sub">Study smarter this school year</div>
+          </div>
+          <div class="card-box" data-prompt="Create a structured 30-day study plan">
+            <strong>Study Plan</strong>
+            <div class="tool-sub">Structured lessons & practice</div>
+          </div>
+        </div>
+        <div class="pop-section-label">Your study notebooks</div>
+        <div class="card-box">
+          <strong>Learning tailored to you</strong>
+          <div class="tool-sub">Set up a study notebook to get custom lessons and track your progress.</div>
+          <button class="api-pill-btn" id="studentNewNotebookBtn" style="margin-top:10px;">＋ New notebook</button>
+        </div>
+      </section>
+
+      <!-- 8. Customise View (01:06) -->
+      <section class="view-section" id="viewCustomise">
+        <div class="tabs-bar">
+          <button class="tab-btn active" data-ctab="discover">Discover</button>
+          <button class="tab-btn" data-ctab="connectors">Connectors</button>
+          <button class="tab-btn" data-ctab="skills">Skills</button>
+        </div>
+        <div class="page-heading">Customise your chats</div>
+        <div id="customiseTabBody"></div>
+      </section>
     </main>
 
-    <!-- Single Bottom Composer Bar -->
-    <div class="bottom-composer-wrap">
-      <div class="attachment-preview" id="attachmentBar">
-        <span id="attachmentLabel">Attached</span>
-        <button class="icon-btn" id="clearAttachmentBtn" style="width:26px;height:26px;font-size:14px;">✕</button>
+    <!-- Bottom Composer Bar (matches 00:00 & 00:25 Live Voice Bar) -->
+    <div class="bottom-wrap">
+      <div class="attachment-pill" id="attachmentPill">
+        <span id="attachmentText">Attached</span>
+        <button class="icon-btn" id="removeAttachmentBtn" style="width:24px;height:24px;font-size:13px;">✕</button>
       </div>
-      <div class="composer-capsule">
-        <button class="icon-btn" id="plusBtn" title="Add & Tools">＋</button>
+
+      <div class="composer-pill" id="normalComposer">
+        <button class="icon-btn" id="openPlusSheetBtn" title="Add & Tools">＋</button>
         <input
           type="text"
           class="composer-input"
@@ -659,713 +950,887 @@
           autocomplete="off"
         />
         <button class="icon-btn" id="micBtn" title="Voice Input">🎤</button>
-        <button class="send-btn" id="sendBtn" title="Send">↑</button>
+        <button class="live-wave-btn" id="liveModeBtn" title="Live Voice">ılı</button>
+        <button class="send-arrow-btn" id="sendBtn" title="Send">↑</button>
+      </div>
+
+      <div class="live-bar" id="liveVoiceBar">
+        <button class="icon-btn" id="livePlusBtn">＋</button>
+        <span class="wave-dots">•••••••••••</span>
+        <div style="display:flex;gap:6px;">
+          <button class="icon-btn" id="stopLiveBtn" title="Stop">□</button>
+          <button class="send-arrow-btn visible" id="sendLiveBtn" title="Send">↑</button>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- Hidden File Inputs -->
-  <input type="file" id="imagePicker" accept="image/*" style="display:none;" />
-  <input type="file" id="cameraPicker" accept="image/*" capture="environment" style="display:none;" />
-  <input type="file" id="docPicker" accept=".txt,.md,.json,.csv,.pdf,.doc,.docx" style="display:none;" />
+  <input type="file" id="photoInput" accept="image/*" style="display:none;" />
+  <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none;" />
+  <input type="file" id="fileInput" accept="*/*" style="display:none;" />
 
-  <!-- Left Drawer (☰) -->
-  <div class="drawer-backdrop" id="historyDrawer">
-    <div class="side-drawer">
-      <div class="sheet-title">
-        <span>Shadhin -AI</span>
-        <button class="icon-btn" id="closeDrawerBtn">✕</button>
+  <!-- Left Navigation Drawer (00:33) -->
+  <div class="drawer-overlay" id="drawerOverlay">
+    <aside class="nav-drawer">
+      <div class="drawer-header">
+        <span style="font-size:18px;font-weight:500;">Shadhin -AI</span>
+        <div>
+          <button class="icon-btn" id="drawerSearchBtn" title="Search">🔍</button>
+          <button class="icon-btn" id="closeDrawerBtn" title="Close">✕</button>
+        </div>
       </div>
 
-      <button class="drawer-nav-item" id="drawerNewChatBtn">＋ <span>New chat</span></button>
-      <button class="drawer-nav-item" data-quick-action="Library">📚 <span>Library</span></button>
-      <button class="drawer-nav-item" data-quick-action="Images">🖼 <span>Images</span></button>
-      <button class="drawer-nav-item" data-quick-action="Scheduled">🗓 <span>Scheduled</span></button>
-      <button class="drawer-nav-item" data-quick-action="Students">🎓 <span>Students</span></button>
+      <input type="text" class="input-box" id="chatSearchInput" placeholder="Search chats..." style="display:none;margin:0 0 8px;" />
 
-      <button class="drawer-nav-item" id="moreDrawerToggle">⋯ <span>More</span></button>
-      <div class="sub-menu-list" id="moreSubMenu">
-        <button class="drawer-nav-item" data-quick-action="Customise">🎨 <span>Customise</span></button>
-        <button class="drawer-nav-item" data-quick-action="Videos">🎬 <span>Videos</span></button>
+      <button class="drawer-item active" data-nav="home">✎ <span>New chat</span></button>
+      <button class="drawer-item" data-nav="library">⊞ <span>Library</span></button>
+      <button class="drawer-item" data-nav="images">🖼 <span>Images</span></button>
+      <button class="drawer-item" data-nav="scheduled">🕒 <span>Scheduled</span></button>
+      <button class="drawer-item" data-nav="students">🎓 <span>Students</span></button>
+
+      <button class="drawer-item" id="toggleMoreBtn">⋯ <span>More</span></button>
+      <div class="more-group" id="moreGroup">
+        <button class="drawer-item" data-nav="customise">⚙ <span>Customise</span></button>
+        <button class="drawer-item" data-nav="videos">🎬 <span>Videos</span></button>
       </div>
 
-      <div class="group-label">Notebooks</div>
-      <button class="drawer-nav-item" id="newNotebookBtn">＋ <span>New notebook</span></button>
-      <div id="notebookList"></div>
+      <div class="pop-section-label">Notebooks</div>
+      <button class="drawer-item" id="drawerAddNotebookBtn">＋ <span>New notebook</span></button>
+      <div id="drawerNotebooksList"></div>
 
-      <div class="group-label">Chats</div>
-      <div id="historyList"></div>
+      <div class="pop-section-label">All</div>
+      <div id="drawerChatsList"></div>
 
-      <button class="drawer-nav-item" id="drawerAccountBtn" style="margin-top:auto;">👤 <span>Accounts & Settings</span></button>
-    </div>
+      <div class="drawer-footer">
+        <button class="drawer-item" id="drawerFooterAccount" style="padding:8px;">
+          <span class="avatar-btn" id="drawerAvatarBadge" style="width:28px;height:28px;font-size:12px;display:inline-flex;align-items:center;justify-content:center;">S</span>
+          <span id="drawerAccountName" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Shadhin</span>
+        </button>
+        <button class="api-pill-btn" id="drawerModelLinkBtn">Model Link</button>
+      </div>
+    </aside>
   </div>
 
-  <!-- Plus Bottom Sheet (matches video bottom sheet flow) -->
-  <div class="sheet-backdrop" id="plusSheet">
-    <div class="sheet-panel">
-      <div class="sheet-title">
-        <span>Add & Tools</span>
-        <button class="icon-btn" id="closePlusSheet">✕</button>
+  <!-- Bottom Sheet for + Button (00:05 - 00:20) -->
+  <div class="sheet-overlay" id="plusSheetOverlay">
+    <div class="bottom-sheet">
+      <div class="sheet-handle"></div>
+
+      <div class="source-scroller">
+        <button class="source-card" id="srcPhotos"><span>🖼</span><span>Photos</span></button>
+        <button class="source-card" id="srcCamera"><span>📷</span><span>Camera</span></button>
+        <button class="source-card" data-prefill="Generate an avatar style portrait: "><span>🧑</span><span>Avatar</span></button>
+        <button class="source-card" id="srcFiles"><span>📎</span><span>Files</span></button>
+        <button class="source-card" data-prefill="Search and summarize from Drive: "><span>🔺</span><span>Drive</span></button>
+        <button class="source-card" data-prefill="Add notes to Notebook: "><span>📓</span><span>Notebooks</span></button>
+        <button class="source-card" data-prefill="Find places and route on Map: "><span>📍</span><span>Map</span></button>
       </div>
 
-      <div class="horizontal-cards">
-        <button class="quick-source-card" id="pickPhotosCard">
+      <button class="tool-row" data-prefill="Create image: ">
+        <div class="tool-row-left">
           <span>🖼</span>
-          <span>Photos</span>
-        </button>
-        <button class="quick-source-card" id="pickCameraCard">
-          <span>📷</span>
-          <span>Camera</span>
-        </button>
-        <button class="quick-source-card" data-source-prompt="Create an avatar portrait style prompt">
-          <span>🧑</span>
-          <span>Avatar</span>
-        </button>
-        <button class="quick-source-card" id="pickFilesCard">
-          <span>📎</span>
-          <span>Files</span>
-        </button>
-        <button class="quick-source-card" data-source-prompt="Summarize notes from Drive">
-          <span>🔺</span>
-          <span>Drive</span>
-        </button>
-        <button class="quick-source-card" data-source-prompt="Organize study points in a notebook">
-          <span>📓</span>
-          <span>Notebooks</span>
-        </button>
-        <button class="quick-source-card" data-source-prompt="Plan a route or location guide on Map">
-          <span>📍</span>
-          <span>Map</span>
-        </button>
-      </div>
-
-      <button class="feature-row-btn" data-tool-prefix="Create image prompt: ">
-        <div class="feature-row-left">
-          <span>🎨</span>
           <div>
             <div><strong>Create images</strong></div>
-            <div class="feature-row-sub">Visualise and edit</div>
+            <div class="tool-sub">Visualise and edit</div>
           </div>
         </div>
       </button>
 
-      <button class="feature-row-btn" data-tool-prefix="Create video concept & storyboard: ">
-        <div class="feature-row-left">
+      <button class="tool-row" data-prefill="Generate video with Veo / Kling: ">
+        <div class="tool-row-left">
           <span>🎬</span>
           <div>
             <div><strong>Video</strong></div>
-            <div class="feature-row-sub">Generate motion & scene plan</div>
+            <div class="tool-sub">Generate with Veo / Kling</div>
           </div>
         </div>
+        <span class="api-pill-btn">Pro</span>
       </button>
 
-      <button class="feature-row-btn" data-tool-prefix="Write music & lyrics idea: ">
-        <div class="feature-row-left">
+      <button class="tool-row" data-prefill="Create music audio track & lyrics: ">
+        <div class="tool-row-left">
           <span>🎵</span>
           <div>
             <div><strong>Create music</strong></div>
-            <div class="feature-row-sub">Make audio tracks & ideas</div>
+            <div class="tool-sub">Make audio tracks</div>
           </div>
         </div>
       </button>
 
-      <button class="feature-row-btn" data-tool-prefix="Build clean code or slide structure: ">
-        <div class="feature-row-left">
+      <button class="tool-row" data-prefill="Open Canvas to code, write or make slides: ">
+        <div class="tool-row-left">
           <span>⬜</span>
           <div>
             <div><strong>Canvas</strong></div>
-            <div class="feature-row-sub">Code, write or make slides</div>
+            <div class="tool-sub">Code, write or make slides</div>
           </div>
         </div>
       </button>
 
-      <button class="feature-row-btn" data-tool-prefix="Deep research report on: ">
-        <div class="feature-row-left">
+      <button class="tool-row" data-prefill="Deep Research report on: ">
+        <div class="tool-row-left">
           <span>🔎</span>
           <div>
             <div><strong>Deep Research</strong></div>
-            <div class="feature-row-sub">Get detailed reports</div>
+            <div class="tool-sub">Get detailed reports</div>
           </div>
         </div>
       </button>
 
-      <button class="feature-row-btn" data-tool-prefix="Step-by-step guided learning on: ">
-        <div class="feature-row-left">
+      <button class="tool-row" data-prefill="Guided Learning step-by-step on: ">
+        <div class="tool-row-left">
           <span>🎓</span>
           <div>
             <div><strong>Guided Learning</strong></div>
-            <div class="feature-row-sub">Get step-by-step help</div>
+            <div class="tool-sub">Get step-by-step help</div>
           </div>
         </div>
       </button>
 
-      <div class="feature-row-btn" id="personalizeRow">
-        <div class="feature-row-left">
+      <div class="tool-row">
+        <div class="tool-row-left">
           <span>✨</span>
           <div>
-            <div><strong>Personal Intelligence</strong></div>
-            <div class="feature-row-sub">Personalise chat preferences</div>
+            <div><strong>Personal Intelligence</strong> <span style="font-size:11px;background:#2b2d31;padding:2px 6px;border-radius:6px;">Labs</span></div>
+            <div class="tool-sub">Personalise chat if helpful</div>
           </div>
         </div>
-        <input type="checkbox" id="personalizeToggle" checked style="width:18px;height:18px;" />
+        <input type="checkbox" id="personalIntelToggle" checked style="width:20px;height:20px;" />
       </div>
     </div>
   </div>
 
-  <!-- Model & Mode Sheet -->
-  <div class="sheet-backdrop" id="modelSheet">
-    <div class="sheet-panel">
-      <div class="sheet-title">
-        <span>Model & Mode</span>
-        <button class="icon-btn" id="closeModelSheet">✕</button>
+  <!-- Full-Screen Account & Custom Model Link Setup Modal (01:41 - 01:53) -->
+  <div class="full-modal" id="accountModal">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <span style="font-size:18px;font-weight:500;">Account & Model Endpoints</span>
+      <button class="icon-btn" id="closeAccountModalBtn">✕</button>
+    </div>
+
+    <!-- Active Account & Switcher -->
+    <div class="account-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;" id="toggleAccountListRow">
+        <div>
+          <div style="font-weight:600;font-size:15px;" id="modalCurrentAccName">Shadhin</div>
+          <div style="font-size:12.5px;color:#9aa0a6;" id="modalCurrentAccEmail">shadhin@local.app</div>
+        </div>
+        <span>▾</span>
       </div>
 
-      <div class="mode-grid" id="modeGrid">
-        <button class="mode-btn selected" data-mode="Auto">Auto</button>
-        <button class="mode-btn" data-mode="Low">Low</button>
-        <button class="mode-btn" data-mode="Medium">Medium</button>
-        <button class="mode-btn" data-mode="High">High</button>
+      <div id="accountSwitcherSection" style="margin-top:12px;">
+        <div id="savedAccountsList"></div>
+        <input type="text" class="input-box" id="newAccName" placeholder="Add account name" />
+        <input type="email" class="input-box" id="newAccEmail" placeholder="Add account email" />
+        <button class="btn-primary" id="saveNewAccountBtn">＋ Add another account</button>
+      </div>
+    </div>
+
+    <!-- Model Link & API Configuration System -->
+    <div class="account-card">
+      <div style="font-weight:600;font-size:15px;margin-bottom:4px;">🔗 Add & Connect AI Model Link</div>
+      <div style="font-size:12px;color:#9aa0a6;line-height:1.45;">
+        Paste any OpenAI-compatible, OpenRouter, Ollama, Groq, or custom server endpoint URL & API key. Once saved, prompts sent in chat will call your link directly.
       </div>
 
-      <div class="group-label">Google Models</div>
-      <div id="googleModels"></div>
+      <input type="text" class="input-box" id="customModelLabelInput" placeholder="Model display name (e.g. Gemini 2.5 Pro / Kling / Llama)" />
+      <input type="text" class="input-box" id="customModelIdInput" placeholder="Model ID (e.g. google/gemini-2.5-pro or llama3)" />
+      <input type="url" class="input-box" id="customEndpointInput" placeholder="Endpoint Link (e.g. https://openrouter.ai/api/v1/chat/completions)" />
+      <input type="password" class="input-box" id="customApiKeyInput" placeholder="API Key (optional for local/open endpoints)" />
+      <button class="btn-primary" id="saveModelLinkBtn">Save & Activate Model Link</button>
+    </div>
 
-      <div class="group-label">Kling AI Models</div>
-      <div id="klingModels"></div>
-
-      <div class="group-label">Leonardo AI Models</div>
-      <div id="leonardoModels"></div>
-
-      <div class="group-label">Custom / Open-Source Endpoint URL</div>
-      <div class="field-box">
-        <input type="url" class="text-field" id="endpointUrlInput" placeholder="https://your-endpoint.example/v1/chat" />
-        <button class="primary-btn" id="saveEndpointBtn">Save Endpoint</button>
-      </div>
+    <!-- Settings & Info -->
+    <div class="account-card">
+      <button class="tool-row" id="clearAllDataBtn">
+        <span>🗑 Clear saved chat history</span>
+      </button>
+      <button class="tool-row" id="showHelpToastBtn">
+        <span>❓ Help & Open-Source Info (Shadhin -AI)</span>
+      </button>
     </div>
   </div>
 
-  <!-- Account Sheet -->
-  <div class="sheet-backdrop" id="accountSheet">
-    <div class="sheet-panel">
-      <div class="sheet-title">
-        <span>Accounts</span>
-        <button class="icon-btn" id="closeAccountSheet">✕</button>
-      </div>
-
-      <div class="field-box">
-        <input type="text" class="text-field" id="accNameInput" placeholder="Account name" />
-        <input type="email" class="text-field" id="accEmailInput" placeholder="Email address (optional)" />
-        <button class="primary-btn" id="addAccountBtn">Add Account</button>
-        <div class="group-label">Saved Accounts</div>
-        <div id="accountList"></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="toast-banner" id="toastBanner"></div>
+  <div class="toast" id="toastBox"></div>
 
   <script>
+    // 1. Splash screen disappears after launch
     window.addEventListener("DOMContentLoaded", () => {
       setTimeout(() => {
-        const splash = document.getElementById("splash-screen");
-        if (splash) {
-          splash.classList.add("hidden");
-          setTimeout(() => splash.remove(), 500);
+        const sp = document.getElementById("splash-screen");
+        if (sp) {
+          sp.classList.add("hidden");
+          setTimeout(() => sp.remove(), 500);
         }
-      }, 2200);
+      }, 2000);
     });
 
-    const MODELS = {
-      google: [
-        "Gemini 2.5 Pro",
-        "Gemini 2.5 Flash",
-        "Gemini 2.5 Flash-Lite",
-        "Gemini 2.0 Flash",
-        "Imagen 3",
-        "Veo 2"
-      ],
-      kling: [
-        "Kling 2.0 Master",
-        "Kling 1.6 Pro",
-        "Kling 1.6 Standard",
-        "Kolors Image"
-      ],
-      leonardo: [
-        "Leonardo Phoenix 1.0",
-        "Leonardo Kino XL",
-        "Leonardo Lightning XL",
-        "Leonardo Anime XL",
-        "Leonardo Vision XL"
-      ]
+    const BUILTIN_MODELS = {
+      google: ["Gemini 2.5 Pro", "Gemini 2.5 Flash", "Gemini 2.5 Flash-Lite", "Imagen 3", "Veo 2"],
+      kling: ["Kling 2.0 Master", "Kling 1.6 Pro", "Kolors Image"],
+      leonardo: ["Leonardo Phoenix 1.0", "Leonardo Kino XL", "Leonardo Lightning XL"]
     };
 
-    let selectedModel = "Gemini 2.5 Pro";
-    let selectedMode = "Auto";
-    let isTemporaryChat = false;
-    let endpointUrl = localStorage.getItem("shadhin_endpoint_url") || "";
-    let accounts = JSON.parse(localStorage.getItem("shadhin_accounts") || '[{"name":"Shadhin","email":"shadhin@local.app"}]');
-    let activeAccountIndex = Number(localStorage.getItem("shadhin_active_acc") || 0);
-    let sessions = JSON.parse(localStorage.getItem("shadhin_sessions") || "[]");
-    let notebooks = JSON.parse(localStorage.getItem("shadhin_notebooks") || '["General Notes"]');
-    let currentSessionId = null;
-    let attachedFileName = "";
+    let state = {
+      model: localStorage.getItem("shadhin_model") || "Gemini 2.5 Pro",
+      mode: localStorage.getItem("shadhin_mode") || "Auto",
+      accounts: JSON.parse(localStorage.getItem("shadhin_accounts") || '[{"name":"Shadhin","email":"shadhin@local.app"}]'),
+      activeAcc: Number(localStorage.getItem("shadhin_active_acc") || 0),
+      sessions: JSON.parse(localStorage.getItem("shadhin_sessions") || "[]"),
+      notebooks: JSON.parse(localStorage.getItem("shadhin_notebooks") || '["Study Notes"]'),
+      customModels: JSON.parse(localStorage.getItem("shadhin_custom_models") || "[]"),
+      endpoint: localStorage.getItem("shadhin_endpoint") || "",
+      modelId: localStorage.getItem("shadhin_model_id") || "",
+      apiKey: localStorage.getItem("shadhin_api_key") || "",
+      currentSessionId: null,
+      tempMode: false,
+      attachedName: "",
+      attachedDataUrl: ""
+    };
 
-    const historyDrawer = document.getElementById("historyDrawer");
-    const plusSheet = document.getElementById("plusSheet");
-    const modelSheet = document.getElementById("modelSheet");
-    const accountSheet = document.getElementById("accountSheet");
-    const promptInput = document.getElementById("promptInput");
-    const sendBtn = document.getElementById("sendBtn");
-    const chatList = document.getElementById("chatList");
-    const homeView = document.getElementById("homeView");
-    const attachmentBar = document.getElementById("attachmentBar");
-    const attachmentLabel = document.getElementById("attachmentLabel");
-    const toastBanner = document.getElementById("toastBanner");
-
-    function showToast(msg) {
-      toastBanner.textContent = msg;
-      toastBanner.classList.add("show");
-      clearTimeout(window._toastTimer);
-      window._toastTimer = setTimeout(() => toastBanner.classList.remove("show"), 2000);
+    function toast(msg) {
+      const box = document.getElementById("toastBox");
+      box.textContent = msg;
+      box.classList.add("show");
+      clearTimeout(window._t);
+      window._t = setTimeout(() => box.classList.remove("show"), 2200);
     }
 
-    function saveSessions() {
-      if (!isTemporaryChat) {
-        localStorage.setItem("shadhin_sessions", JSON.stringify(sessions));
-      }
+    function switchView(viewId) {
+      document.querySelectorAll(".view-section").forEach((v) => v.classList.remove("active"));
+      const target = document.getElementById(viewId);
+      if (target) target.classList.add("active");
     }
 
-    function renderNotebooks() {
-      const nbEl = document.getElementById("notebookList");
-      nbEl.innerHTML = "";
-      notebooks.forEach((nb) => {
-        const btn = document.createElement("button");
-        btn.className = "history-item";
-        btn.textContent = `📓 ${nb}`;
-        btn.onclick = () => {
-          historyDrawer.classList.remove("open");
-          promptInput.value = `Work in notebook "${nb}": `;
-          promptInput.focus();
-          sendBtn.classList.add("active");
-        };
-        nbEl.appendChild(btn);
-      });
+    function syncTopModelLabel() {
+      document.getElementById("topModelLabel").textContent = `${state.model} • ${state.mode}`;
     }
 
-    function renderHistoryList() {
-      const listEl = document.getElementById("historyList");
-      listEl.innerHTML = "";
-      if (!sessions.length) {
-        listEl.innerHTML = '<div style="color:#9aa0a6;font-size:12.5px;padding:6px 10px;">No saved chats yet</div>';
-        return;
-      }
-      sessions.slice().reverse().forEach((sess) => {
-        const btn = document.createElement("button");
-        btn.className = "history-item" + (sess.id === currentSessionId ? " active" : "");
-        btn.textContent = sess.title || "Untitled Chat";
-        btn.onclick = () => {
-          isTemporaryChat = false;
-          document.getElementById("tempBadge").classList.remove("active");
-          loadSession(sess.id);
-          historyDrawer.classList.remove("open");
-        };
-        listEl.appendChild(btn);
-      });
-    }
-
-    function loadSession(sessionId) {
-      const sess = sessions.find((s) => s.id === sessionId);
-      if (!sess) return;
-      currentSessionId = sess.id;
-      chatList.innerHTML = "";
-      if (!sess.messages || !sess.messages.length) {
-        chatList.style.display = "none";
-        homeView.style.display = "flex";
-        return;
-      }
-      homeView.style.display = "none";
-      chatList.style.display = "flex";
-      sess.messages.forEach((m) => appendMessageToDOM(m.role, m.text, m.meta));
-    }
-
-    function ensureSession(firstPrompt) {
-      if (!currentSessionId) {
-        currentSessionId = String(Date.now());
-        const newSess = {
-          id: currentSessionId,
-          title: firstPrompt.slice(0, 36),
-          messages: []
-        };
-        if (!isTemporaryChat) {
-          sessions.push(newSess);
-        }
-        return newSess;
-      }
-      return sessions.find((s) => s.id === currentSessionId) || { id: currentSessionId, title: firstPrompt.slice(0, 36), messages: [] };
-    }
-
-    function renderModelLists() {
-      const map = [
-        { id: "googleModels", items: MODELS.google },
-        { id: "klingModels", items: MODELS.kling },
-        { id: "leonardoModels", items: MODELS.leonardo }
-      ];
-
-      map.forEach(({ id, items }) => {
-        const container = document.getElementById(id);
-        container.innerHTML = "";
-        items.forEach((name) => {
+    function renderModelPopover() {
+      const renderGroup = (elId, list) => {
+        const el = document.getElementById(elId);
+        el.innerHTML = "";
+        list.forEach((mName) => {
           const btn = document.createElement("button");
-          btn.className = "model-item" + (name === selectedModel ? " selected" : "");
-          btn.innerHTML = `<span>${name}</span><span>${name === selectedModel ? "✓" : ""}</span>`;
+          btn.className = "pop-option" + (state.model === mName ? " selected" : "");
+          btn.innerHTML = `<span>${mName}</span><span>${state.model === mName ? "✓" : ""}</span>`;
           btn.onclick = () => {
-            selectedModel = name;
-            document.getElementById("currentModelLabel").textContent = name;
-            renderModelLists();
-            modelSheet.classList.remove("open");
+            state.model = mName;
+            localStorage.setItem("shadhin_model", mName);
+            syncTopModelLabel();
+            document.getElementById("modelPopover").classList.remove("open");
           };
-          container.appendChild(btn);
+          el.appendChild(btn);
         });
-      });
+      };
 
-      document.getElementById("endpointUrlInput").value = endpointUrl;
-    }
+      renderGroup("googleModelList", BUILTIN_MODELS.google);
+      renderGroup("klingModelList", BUILTIN_MODELS.kling);
+      renderGroup("leonardoModelList", BUILTIN_MODELS.leonardo);
 
-    function renderAccounts() {
-      if (!accounts.length) {
-        accounts = [{ name: "Shadhin", email: "shadhin@local.app" }];
+      const customEl = document.getElementById("customModelList");
+      customEl.innerHTML = "";
+      if (!state.customModels.length) {
+        customEl.innerHTML = '<div style="font-size:12px;color:#9aa0a6;padding:4px 8px;">No custom link saved yet</div>';
+      } else {
+        state.customModels.forEach((cm) => {
+          const btn = document.createElement("button");
+          btn.className = "pop-option" + (state.model === cm.name ? " selected" : "");
+          btn.innerHTML = `<span>🔗 ${cm.name}</span><span>${state.model === cm.name ? "✓" : ""}</span>`;
+          btn.onclick = () => {
+            state.model = cm.name;
+            state.endpoint = cm.endpoint;
+            state.modelId = cm.modelId;
+            state.apiKey = cm.apiKey;
+            localStorage.setItem("shadhin_model", cm.name);
+            localStorage.setItem("shadhin_endpoint", cm.endpoint);
+            localStorage.setItem("shadhin_model_id", cm.modelId);
+            localStorage.setItem("shadhin_api_key", cm.apiKey);
+            syncTopModelLabel();
+            document.getElementById("modelPopover").classList.remove("open");
+            toast(`Activated ${cm.name}`);
+          };
+          customEl.appendChild(btn);
+        });
       }
-      if (activeAccountIndex >= accounts.length) activeAccountIndex = 0;
+    }
 
-      const current = accounts[activeAccountIndex];
-      document.getElementById("greetingUser").textContent = `Hello, ${current.name}`;
-      document.getElementById("accountSheetOpenBtn").textContent = (current.name || "S").charAt(0).toUpperCase();
+    function syncAccountsUI() {
+      if (!state.accounts.length) state.accounts = [{ name: "Shadhin", email: "shadhin@local.app" }];
+      if (state.activeAcc >= state.accounts.length) state.activeAcc = 0;
+      const cur = state.accounts[state.activeAcc];
+      const initial = (cur.name || "S").charAt(0).toUpperCase();
 
-      const listEl = document.getElementById("accountList");
-      listEl.innerHTML = "";
-      accounts.forEach((acc, idx) => {
-        const item = document.createElement("div");
-        item.className = "account-chip";
-        item.innerHTML = `
+      document.getElementById("heroGreeting").textContent = `Hi ${cur.name}, what's on your mind?`;
+      document.getElementById("openAccountModalBtn").textContent = initial;
+      document.getElementById("drawerAvatarBadge").textContent = initial;
+      document.getElementById("drawerAccountName").textContent = cur.name;
+      document.getElementById("modalCurrentAccName").textContent = cur.name;
+      document.getElementById("modalCurrentAccEmail").textContent = cur.email || "Local Account";
+
+      const list = document.getElementById("savedAccountsList");
+      list.innerHTML = "";
+      state.accounts.forEach((acc, i) => {
+        const row = document.createElement("div");
+        row.className = "tool-row";
+        row.innerHTML = `
           <div>
-            <div><strong>${acc.name}</strong></div>
-            <div style="color:#9aa0a6;font-size:12px;">${acc.email || "Local Account"}</div>
+            <div style="font-size:13.5px;font-weight:500;">${acc.name}</div>
+            <div class="tool-sub">${acc.email || "Local"}</div>
           </div>
-          <span>${idx === activeAccountIndex ? "Active ✓" : "Switch"}</span>
+          <span style="font-size:12px;color:#a8c7fa;">${i === state.activeAcc ? "Active ✓" : "Switch"}</span>
         `;
-        item.onclick = () => {
-          activeAccountIndex = idx;
-          localStorage.setItem("shadhin_active_acc", String(activeAccountIndex));
-          renderAccounts();
-          accountSheet.classList.remove("open");
+        row.onclick = () => {
+          state.activeAcc = i;
+          localStorage.setItem("shadhin_active_acc", String(i));
+          syncAccountsUI();
+          toast(`Switched to ${acc.name}`);
         };
-        listEl.appendChild(item);
+        list.appendChild(row);
       });
     }
 
-    /* Drawer controls */
-    document.getElementById("drawerOpenBtn").onclick = () => {
-      renderNotebooks();
-      renderHistoryList();
-      historyDrawer.classList.add("open");
-    };
-    document.getElementById("closeDrawerBtn").onclick = () => historyDrawer.classList.remove("open");
-    historyDrawer.onclick = (e) => { if (e.target === historyDrawer) historyDrawer.classList.remove("open"); };
+    function renderDrawerLists(filterText = "") {
+      const nbList = document.getElementById("drawerNotebooksList");
+      nbList.innerHTML = "";
+      state.notebooks.forEach((nb) => {
+        const b = document.createElement("button");
+        b.className = "history-row";
+        b.textContent = `📓 ${nb}`;
+        b.onclick = () => {
+          document.getElementById("drawerOverlay").classList.remove("open");
+          switchView("viewHome");
+          const inp = document.getElementById("promptInput");
+          inp.value = `[Notebook: ${nb}] `;
+          inp.focus();
+          updateSendVisibility();
+        };
+        nbList.appendChild(b);
+      });
 
-    document.getElementById("moreDrawerToggle").onclick = () => {
-      document.getElementById("moreSubMenu").classList.toggle("open");
+      const chatBox = document.getElementById("drawerChatsList");
+      chatBox.innerHTML = "";
+      const filtered = state.sessions
+        .slice()
+        .reverse()
+        .filter((s) => (s.title || "").toLowerCase().includes(filterText.toLowerCase()));
+
+      if (!filtered.length) {
+        chatBox.innerHTML = '<div style="font-size:12px;color:#9aa0a6;padding:8px 12px;">No chats yet</div>';
+      } else {
+        filtered.forEach((s) => {
+          const b = document.createElement("button");
+          b.className = "history-row";
+          b.textContent = s.title;
+          b.onclick = () => {
+            state.tempMode = false;
+            state.currentSessionId = s.id;
+            const list = document.getElementById("chatList");
+            list.innerHTML = "";
+            s.messages.forEach((m) => renderBubble(m.role, m.text, m.meta));
+            switchView("viewChat");
+            document.getElementById("drawerOverlay").classList.remove("open");
+          };
+          chatBox.appendChild(b);
+        });
+      }
+
+      const libDocs = document.getElementById("libraryDocsList");
+      libDocs.innerHTML = "";
+      if (!state.sessions.length) {
+        libDocs.innerHTML = '<div class="card-box" style="color:#9aa0a6;">No saved documents or chats yet</div>';
+      } else {
+        state.sessions.slice(-5).reverse().forEach((s) => {
+          const c = document.createElement("div");
+          c.className = "card-box";
+          c.innerHTML = `<strong>📄 ${s.title}</strong><div class="tool-sub">${s.messages.length} messages</div>`;
+          c.onclick = () => {
+            state.currentSessionId = s.id;
+            const list = document.getElementById("chatList");
+            list.innerHTML = "";
+            s.messages.forEach((m) => renderBubble(m.role, m.text, m.meta));
+            switchView("viewChat");
+          };
+          libDocs.appendChild(c);
+        });
+      }
+    }
+
+    function renderCustomiseTab(tab = "discover") {
+      const body = document.getElementById("customiseTabBody");
+      const items = {
+        discover: [
+          ["Google Workspace", "Summarise, find and get quick answers"],
+          ["Dropbox", "Access, search and summarize files"],
+          ["Focus your energy", "Align your workload with your energy"],
+          ["Generate fresh ideas", "Turn existing content into 5 new angles"]
+        ],
+        connectors: [
+          ["Custom REST Endpoint", "Connect any OpenAI-compatible API URL"],
+          ["Local Ollama Server", "Connect local open-source models via URL"],
+          ["OpenRouter Gateway", "Route across multiple AI models via one link"]
+        ],
+        skills: [
+          ["Code Architect", "Structured clean code & debugging"],
+          ["Deep Researcher", "Multi-step analytical summaries"],
+          ["Bengali & English Translator", "Natural bilingual translation"]
+        ]
+      };
+
+      body.innerHTML = "";
+      (items[tab] || items.discover).forEach(([title, sub]) => {
+        const row = document.createElement("div");
+        row.className = "card-box";
+        row.style.display = "flex";
+        row.style.justifyContent = "space-between";
+        row.style.alignItems = "center";
+        row.innerHTML = `<div><strong>${title}</strong><div class="tool-sub">${sub}</div></div><span style="font-size:20px;color:#a8c7fa;">＋</span>`;
+        row.onclick = () => {
+          switchView("viewHome");
+          const inp = document.getElementById("promptInput");
+          inp.value = `Use ${title}: `;
+          inp.focus();
+          updateSendVisibility();
+        };
+        body.appendChild(row);
+      });
+    }
+
+    /* Top Bar Events */
+    document.getElementById("modelPopoverBtn").onclick = (e) => {
+      e.stopPropagation();
+      renderModelPopover();
+      document.getElementById("modelPopover").classList.toggle("open");
     };
 
-    document.querySelectorAll("[data-quick-action]").forEach((btn) => {
+    document.addEventListener("click", (e) => {
+      const pop = document.getElementById("modelPopover");
+      if (pop.classList.contains("open") && !pop.contains(e.target) && e.target.id !== "modelPopoverBtn") {
+        pop.classList.remove("open");
+      }
+    });
+
+    document.querySelectorAll("#modeRow .mode-pill-btn").forEach((btn) => {
       btn.onclick = () => {
-        const act = btn.dataset.quickAction;
-        historyDrawer.classList.remove("open");
-        promptInput.value = `${act}: `;
-        promptInput.focus();
-        sendBtn.classList.add("active");
+        document.querySelectorAll("#modeRow .mode-pill-btn").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        state.mode = btn.dataset.mode;
+        localStorage.setItem("shadhin_mode", state.mode);
+        syncTopModelLabel();
       };
     });
 
-    document.getElementById("newNotebookBtn").onclick = () => {
-      const title = `Notebook ${notebooks.length + 1}`;
-      notebooks.push(title);
-      localStorage.setItem("shadhin_notebooks", JSON.stringify(notebooks));
-      renderNotebooks();
-      showToast(`Created ${title}`);
+    document.getElementById("tempChatToggleBtn").onclick = () => {
+      state.tempMode = true;
+      state.currentSessionId = null;
+      document.getElementById("chatList").innerHTML = "";
+      switchView("viewTemp");
     };
 
-    document.getElementById("drawerAccountBtn").onclick = () => {
-      historyDrawer.classList.remove("open");
-      renderAccounts();
-      accountSheet.classList.add("open");
+    document.getElementById("closeTempViewBtn").onclick = () => {
+      state.tempMode = false;
+      switchView("viewHome");
     };
 
-    function resetToFreshChat() {
-      currentSessionId = null;
-      chatList.innerHTML = "";
-      chatList.style.display = "none";
-      homeView.style.display = "flex";
-      historyDrawer.classList.remove("open");
+    /* Account & Model Link Modal */
+    function openAccountModal() {
+      document.getElementById("customEndpointInput").value = state.endpoint;
+      document.getElementById("customModelIdInput").value = state.modelId;
+      document.getElementById("customApiKeyInput").value = state.apiKey;
+      syncAccountsUI();
+      document.getElementById("accountModal").classList.add("open");
     }
 
-    document.getElementById("drawerNewChatBtn").onclick = () => {
-      isTemporaryChat = false;
-      document.getElementById("tempBadge").classList.remove("active");
-      resetToFreshChat();
+    document.getElementById("openAccountModalBtn").onclick = openAccountModal;
+    document.getElementById("openApiSetupBtn").onclick = openAccountModal;
+    document.getElementById("drawerModelLinkBtn").onclick = () => {
+      document.getElementById("drawerOverlay").classList.remove("open");
+      openAccountModal();
+    };
+    document.getElementById("drawerFooterAccount").onclick = () => {
+      document.getElementById("drawerOverlay").classList.remove("open");
+      openAccountModal();
+    };
+    document.getElementById("closeAccountModalBtn").onclick = () => {
+      document.getElementById("accountModal").classList.remove("open");
     };
 
-    /* Temporary chat button (top right) */
-    document.getElementById("tempChatBtn").onclick = () => {
-      isTemporaryChat = true;
-      currentSessionId = null;
-      chatList.innerHTML = "";
-      chatList.style.display = "none";
-      homeView.style.display = "flex";
-      document.getElementById("tempBadge").classList.add("active");
-      showToast("Temporary chat started");
+    document.getElementById("saveNewAccountBtn").onclick = () => {
+      const name = document.getElementById("newAccName").value.trim();
+      const email = document.getElementById("newAccEmail").value.trim();
+      if (!name) return;
+      state.accounts.push({ name, email: email || "Local Account" });
+      state.activeAcc = state.accounts.length - 1;
+      localStorage.setItem("shadhin_accounts", JSON.stringify(state.accounts));
+      localStorage.setItem("shadhin_active_acc", String(state.activeAcc));
+      document.getElementById("newAccName").value = "";
+      document.getElementById("newAccEmail").value = "";
+      syncAccountsUI();
+      toast("Account added");
     };
 
-    document.getElementById("exitTempBtn").onclick = () => {
-      isTemporaryChat = false;
-      document.getElementById("tempBadge").classList.remove("active");
-      resetToFreshChat();
+    document.getElementById("saveModelLinkBtn").onclick = () => {
+      const label = document.getElementById("customModelLabelInput").value.trim() || "Custom Linked Model";
+      const modelId = document.getElementById("customModelIdInput").value.trim();
+      const endpoint = document.getElementById("customEndpointInput").value.trim();
+      const apiKey = document.getElementById("customApiKeyInput").value.trim();
+
+      if (!endpoint) {
+        toast("Please paste a valid endpoint URL");
+        return;
+      }
+
+      state.endpoint = endpoint;
+      state.modelId = modelId;
+      state.apiKey = apiKey;
+      state.model = label;
+
+      const existingIdx = state.customModels.findIndex((m) => m.name === label);
+      const entry = { name: label, modelId, endpoint, apiKey };
+      if (existingIdx >= 0) state.customModels[existingIdx] = entry;
+      else state.customModels.push(entry);
+
+      localStorage.setItem("shadhin_custom_models", JSON.stringify(state.customModels));
+      localStorage.setItem("shadhin_endpoint", endpoint);
+      localStorage.setItem("shadhin_model_id", modelId);
+      localStorage.setItem("shadhin_api_key", apiKey);
+      localStorage.setItem("shadhin_model", label);
+
+      syncTopModelLabel();
+      document.getElementById("accountModal").classList.remove("open");
+      toast(`Connected: ${label}`);
     };
 
-    /* Plus Bottom Sheet controls */
-    document.getElementById("plusBtn").onclick = () => plusSheet.classList.add("open");
-    document.getElementById("closePlusSheet").onclick = () => plusSheet.classList.remove("open");
-    plusSheet.onclick = (e) => { if (e.target === plusSheet) plusSheet.classList.remove("open"); };
+    document.getElementById("clearAllDataBtn").onclick = () => {
+      state.sessions = [];
+      state.currentSessionId = null;
+      localStorage.setItem("shadhin_sessions", "[]");
+      renderDrawerLists();
+      switchView("viewHome");
+      toast("Chat history cleared");
+    };
 
-    function attachFileFromInput(inputEl) {
+    document.getElementById("showHelpToastBtn").onclick = () => {
+      toast("Shadhin -AI Open Source • Built for custom endpoints");
+    };
+
+    /* Drawer Navigation Events */
+    document.getElementById("openDrawerBtn").onclick = () => {
+      renderDrawerLists();
+      document.getElementById("drawerOverlay").classList.add("open");
+    };
+    document.getElementById("closeDrawerBtn").onclick = () => {
+      document.getElementById("drawerOverlay").classList.remove("open");
+    };
+    document.getElementById("drawerOverlay").onclick = (e) => {
+      if (e.target.id === "drawerOverlay") document.getElementById("drawerOverlay").classList.remove("open");
+    };
+
+    document.getElementById("drawerSearchBtn").onclick = () => {
+      const inp = document.getElementById("chatSearchInput");
+      inp.style.display = inp.style.display === "none" ? "block" : "none";
+      if (inp.style.display === "block") inp.focus();
+    };
+    document.getElementById("chatSearchInput").oninput = (e) => renderDrawerLists(e.target.value);
+
+    document.getElementById("toggleMoreBtn").onclick = () => {
+      document.getElementById("moreGroup").classList.toggle("open");
+    };
+
+    document.querySelectorAll("[data-nav]").forEach((btn) => {
+      btn.onclick = () => {
+        document.querySelectorAll("[data-nav]").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        const nav = btn.dataset.nav;
+        document.getElementById("drawerOverlay").classList.remove("open");
+
+        if (nav === "home") {
+          state.tempMode = false;
+          state.currentSessionId = null;
+          document.getElementById("chatList").innerHTML = "";
+          switchView("viewHome");
+        } else if (nav === "library") {
+          renderDrawerLists();
+          switchView("viewLibrary");
+        } else if (nav === "images") {
+          switchView("viewImages");
+        } else if (nav === "scheduled") {
+          switchView("viewScheduled");
+        } else if (nav === "students") {
+          switchView("viewStudents");
+        } else if (nav === "customise") {
+          renderCustomiseTab("discover");
+          switchView("viewCustomise");
+        } else if (nav === "videos") {
+          switchView("viewHome");
+          const inp = document.getElementById("promptInput");
+          inp.value = "Create a video storyboard & prompt: ";
+          inp.focus();
+          updateSendVisibility();
+        }
+      };
+    });
+
+    function addNotebook() {
+      const name = `Notebook ${state.notebooks.length + 1}`;
+      state.notebooks.push(name);
+      localStorage.setItem("shadhin_notebooks", JSON.stringify(state.notebooks));
+      renderDrawerLists();
+      toast(`Created ${name}`);
+    }
+    document.getElementById("drawerAddNotebookBtn").onclick = addNotebook;
+    document.getElementById("studentNewNotebookBtn").onclick = addNotebook;
+
+    document.querySelectorAll("[data-ctab]").forEach((tabBtn) => {
+      tabBtn.onclick = () => {
+        document.querySelectorAll("[data-ctab]").forEach((t) => t.classList.remove("active"));
+        tabBtn.classList.add("active");
+        renderCustomiseTab(tabBtn.dataset.ctab);
+      };
+    });
+
+    /* Plus Bottom Sheet Events */
+    document.getElementById("openPlusSheetBtn").onclick = () => {
+      document.getElementById("plusSheetOverlay").classList.add("open");
+    };
+    document.getElementById("plusSheetOverlay").onclick = (e) => {
+      if (e.target.id === "plusSheetOverlay") document.getElementById("plusSheetOverlay").classList.remove("open");
+    };
+
+    function handleFileAttach(inputEl) {
       const f = inputEl.files && inputEl.files[0];
       if (!f) return;
-      attachedFileName = f.name;
-      attachmentLabel.textContent = `📎 ${f.name}`;
-      attachmentBar.classList.add("active");
-      promptInput.focus();
+      state.attachedName = f.name;
+      document.getElementById("attachmentText").textContent = `📎 ${f.name}`;
+      document.getElementById("attachmentPill").classList.add("active");
+      updateSendVisibility();
+
+      if (f.type.startsWith("image/")) {
+        const reader = new FileReader();
+        reader.onload = () => { state.attachedDataUrl = reader.result || ""; };
+        reader.readAsDataURL(f);
+      } else {
+        state.attachedDataUrl = "";
+      }
     }
 
-    document.getElementById("pickPhotosCard").onclick = () => {
-      plusSheet.classList.remove("open");
-      document.getElementById("imagePicker").click();
+    document.getElementById("srcPhotos").onclick = () => {
+      document.getElementById("plusSheetOverlay").classList.remove("open");
+      document.getElementById("photoInput").click();
     };
-    document.getElementById("pickCameraCard").onclick = () => {
-      plusSheet.classList.remove("open");
-      document.getElementById("cameraPicker").click();
+    document.getElementById("srcCamera").onclick = () => {
+      document.getElementById("plusSheetOverlay").classList.remove("open");
+      document.getElementById("cameraInput").click();
     };
-    document.getElementById("pickFilesCard").onclick = () => {
-      plusSheet.classList.remove("open");
-      document.getElementById("docPicker").click();
-    };
-
-    document.getElementById("imagePicker").onchange = (e) => attachFileFromInput(e.target);
-    document.getElementById("cameraPicker").onchange = (e) => attachFileFromInput(e.target);
-    document.getElementById("docPicker").onchange = (e) => attachFileFromInput(e.target);
-
-    document.getElementById("clearAttachmentBtn").onclick = () => {
-      attachedFileName = "";
-      ["imagePicker", "cameraPicker", "docPicker"].forEach((id) => {
-        document.getElementById(id).value = "";
-      });
-      attachmentBar.classList.remove("active");
+    document.getElementById("srcFiles").onclick = () => {
+      document.getElementById("plusSheetOverlay").classList.remove("open");
+      document.getElementById("fileInput").click();
     };
 
-    document.querySelectorAll("[data-source-prompt]").forEach((card) => {
-      card.onclick = () => {
-        plusSheet.classList.remove("open");
-        promptInput.value = `${card.dataset.sourcePrompt}: `;
-        promptInput.focus();
-        sendBtn.classList.add("active");
-      };
-    });
+    document.getElementById("photoInput").onchange = (e) => handleFileAttach(e.target);
+    document.getElementById("cameraInput").onchange = (e) => handleFileAttach(e.target);
+    document.getElementById("fileInput").onchange = (e) => handleFileAttach(e.target);
 
-    document.querySelectorAll("[data-tool-prefix]").forEach((row) => {
-      row.onclick = () => {
-        plusSheet.classList.remove("open");
-        promptInput.value = row.dataset.toolPrefix;
-        promptInput.focus();
-        sendBtn.classList.add("active");
-      };
-    });
-
-    document.getElementById("personalizeToggle").onchange = (e) => {
-      showToast(e.target.checked ? "Personal Intelligence enabled" : "Personal Intelligence off");
+    document.getElementById("removeAttachmentBtn").onclick = () => {
+      state.attachedName = "";
+      state.attachedDataUrl = "";
+      ["photoInput", "cameraInput", "fileInput"].forEach((id) => { document.getElementById(id).value = ""; });
+      document.getElementById("attachmentPill").classList.remove("active");
+      updateSendVisibility();
     };
 
-    /* Model & Account sheets */
-    document.getElementById("modelSheetOpenBtn").onclick = () => {
-      renderModelLists();
-      modelSheet.classList.add("open");
-    };
-    document.getElementById("closeModelSheet").onclick = () => modelSheet.classList.remove("open");
-    modelSheet.onclick = (e) => { if (e.target === modelSheet) modelSheet.classList.remove("open"); };
-
-    document.getElementById("saveEndpointBtn").onclick = () => {
-      endpointUrl = document.getElementById("endpointUrlInput").value.trim();
-      localStorage.setItem("shadhin_endpoint_url", endpointUrl);
-      modelSheet.classList.remove("open");
-      showToast("Endpoint saved");
-    };
-
-    document.getElementById("accountSheetOpenBtn").onclick = () => {
-      renderAccounts();
-      accountSheet.classList.add("open");
-    };
-    document.getElementById("closeAccountSheet").onclick = () => accountSheet.classList.remove("open");
-    accountSheet.onclick = (e) => { if (e.target === accountSheet) accountSheet.classList.remove("open"); };
-
-    document.getElementById("addAccountBtn").onclick = () => {
-      const nameVal = document.getElementById("accNameInput").value.trim();
-      const emailVal = document.getElementById("accEmailInput").value.trim();
-      if (!nameVal) return;
-      accounts.push({ name: nameVal, email: emailVal || "Local Account" });
-      activeAccountIndex = accounts.length - 1;
-      localStorage.setItem("shadhin_accounts", JSON.stringify(accounts));
-      localStorage.setItem("shadhin_active_acc", String(activeAccountIndex));
-      document.getElementById("accNameInput").value = "";
-      document.getElementById("accEmailInput").value = "";
-      renderAccounts();
-      showToast("Account added");
-    };
-
-    document.querySelectorAll("#modeGrid .mode-btn").forEach((btn) => {
-      btn.onclick = () => {
-        document.querySelectorAll("#modeGrid .mode-btn").forEach((b) => b.classList.remove("selected"));
-        btn.classList.add("selected");
-        selectedMode = btn.dataset.mode;
-        document.getElementById("currentModeLabel").textContent = selectedMode;
-      };
-    });
-
-    promptInput.addEventListener("input", () => {
-      sendBtn.classList.toggle("active", promptInput.value.trim().length > 0 || Boolean(attachedFileName));
-    });
-
-    function appendMessageToDOM(role, text, metaText = "") {
-      homeView.style.display = "none";
-      chatList.style.display = "flex";
-
-      const row = document.createElement("div");
-      row.className = "msg-row";
-
-      if (metaText) {
-        const meta = document.createElement("div");
-        meta.className = "msg-meta";
-        meta.textContent = metaText;
-        row.appendChild(meta);
-      }
-
-      const bubble = document.createElement("div");
-      bubble.className = role === "user" ? "msg-user" : "msg-ai";
-      bubble.textContent = text;
-      row.appendChild(bubble);
-
-      chatList.appendChild(row);
-      const mainArea = document.getElementById("mainArea");
-      mainArea.scrollTop = mainArea.scrollHeight;
-    }
-
-    function recordMessage(role, text, metaText = "") {
-      const sess = ensureSession(text);
-      sess.messages.push({ role, text, meta: metaText });
-      if (!isTemporaryChat) {
-        const idx = sessions.findIndex((s) => s.id === sess.id);
-        if (idx === -1) sessions.push(sess);
-        saveSessions();
-      }
-      appendMessageToDOM(role, text, metaText);
-    }
-
-    async function sendPrompt(customText) {
-      let text = (typeof customText === "string" ? customText : promptInput.value).trim();
-      if (!text && attachedFileName) {
-        text = `Analyze attached file: ${attachedFileName}`;
-      }
-      if (!text) return;
-
-      const userDisplay = attachedFileName ? `${text}\n[Attached: ${attachedFileName}]` : text;
-      recordMessage("user", userDisplay);
-
-      const fileUsed = attachedFileName;
-      attachedFileName = "";
-      ["imagePicker", "cameraPicker", "docPicker"].forEach((id) => {
-        document.getElementById(id).value = "";
-      });
-      attachmentBar.classList.remove("active");
-
-      if (typeof customText !== "string") {
-        promptInput.value = "";
-        sendBtn.classList.remove("active");
-      }
-
-      if (endpointUrl) {
-        try {
-          const res = await fetch(endpointUrl, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              prompt: text,
-              model: selectedModel,
-              mode: selectedMode,
-              temporary: isTemporaryChat,
-              attachment: fileUsed || null
-            })
-          });
-          const data = await res.text();
-          recordMessage("ai", data || "Empty response from endpoint.", `${selectedModel} • ${selectedMode}`);
-          return;
-        } catch (err) {
-          recordMessage("ai", `Endpoint error: ${err.message}`, `${selectedModel} • ${selectedMode}`);
-          return;
+    document.querySelectorAll("[data-prefill]").forEach((el) => {
+      el.onclick = () => {
+        document.getElementById("plusSheetOverlay").classList.remove("open");
+        if (document.getElementById("viewHome").classList.contains("active") === false &&
+            document.getElementById("viewChat").classList.contains("active") === false &&
+            document.getElementById("viewTemp").classList.contains("active") === false) {
+          switchView("viewHome");
         }
-      }
+        const inp = document.getElementById("promptInput");
+        inp.value = el.dataset.prefill;
+        inp.focus();
+        updateSendVisibility();
+      };
+    });
 
-      recordMessage(
-        "ai",
-        `Model: ${selectedModel} | Mode: ${selectedMode}${isTemporaryChat ? " | Temporary" : ""}\nPrompt: "${text}"${fileUsed ? `\nFile: ${fileUsed}` : ""}\n\nConfigure an endpoint URL in Model & Mode for live responses.`,
-        `${selectedModel} • ${selectedMode}`
-      );
+    document.querySelectorAll("[data-tpl]").forEach((tile) => {
+      tile.onclick = () => {
+        switchView("viewHome");
+        const inp = document.getElementById("promptInput");
+        inp.value = tile.dataset.tpl;
+        inp.focus();
+        updateSendVisibility();
+      };
+    });
+
+    document.querySelectorAll("[data-prompt]").forEach((el) => {
+      el.onclick = () => sendMessage(el.dataset.prompt);
+    });
+
+    /* Input, Live Voice Bar & Sending */
+    const promptInput = document.getElementById("promptInput");
+    const sendBtn = document.getElementById("sendBtn");
+    const liveModeBtn = document.getElementById("liveModeBtn");
+
+    function updateSendVisibility() {
+      const hasContent = promptInput.value.trim().length > 0 || Boolean(state.attachedName);
+      sendBtn.classList.toggle("visible", hasContent);
+      liveModeBtn.style.display = hasContent ? "none" : "inline-flex";
     }
 
-    sendBtn.onclick = () => sendPrompt();
+    promptInput.addEventListener("input", updateSendVisibility);
     promptInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
-        sendPrompt();
+        sendMessage();
       }
     });
 
+    document.getElementById("liveModeBtn").onclick = () => {
+      document.getElementById("normalComposer").style.display = "none";
+      document.getElementById("liveVoiceBar").classList.add("active");
+    };
+    document.getElementById("stopLiveBtn").onclick = () => {
+      document.getElementById("liveVoiceBar").classList.remove("active");
+      document.getElementById("normalComposer").style.display = "flex";
+    };
+    document.getElementById("sendLiveBtn").onclick = () => {
+      document.getElementById("liveVoiceBar").classList.remove("active");
+      document.getElementById("normalComposer").style.display = "flex";
+      sendMessage("Voice live prompt");
+    };
+
     document.getElementById("micBtn").onclick = () => {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRecognition) {
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SR) {
         promptInput.focus();
-        showToast("Tap input & use keyboard voice typing");
+        toast("Tap input box & use keyboard mic");
         return;
       }
       try {
-        const rec = new SpeechRecognition();
+        const rec = new SR();
         rec.lang = "bn-BD";
-        rec.interimResults = false;
-        rec.onresult = (event) => {
-          const transcript = event.results[0][0].transcript;
-          promptInput.value = transcript;
-          sendBtn.classList.toggle("active", promptInput.value.trim().length > 0);
+        rec.onresult = (ev) => {
+          promptInput.value = ev.results[0][0].transcript;
+          updateSendVisibility();
           promptInput.focus();
         };
-        rec.onerror = () => {
-          promptInput.focus();
-          showToast("Voice input fallback: use keyboard mic");
-        };
+        rec.onerror = () => toast("Use keyboard voice input");
         rec.start();
       } catch (e) {
         promptInput.focus();
       }
     };
 
-    renderAccounts();
-    renderModelLists();
-    renderNotebooks();
-    renderHistoryList();
+    function renderBubble(role, text, meta = "") {
+      const list = document.getElementById("chatList");
+      const row = document.createElement("div");
+      row.className = "msg-row";
+      if (meta) {
+        const m = document.createElement("div");
+        m.className = "msg-meta";
+        m.textContent = meta;
+        row.appendChild(m);
+      }
+      const b = document.createElement("div");
+      b.className = role === "user" ? "msg-user" : "msg-ai";
+      b.textContent = text;
+      row.appendChild(b);
+      list.appendChild(row);
+      const area = document.getElementById("mainArea");
+      area.scrollTop = area.scrollHeight;
+    }
+
+    function pushMessage(role, text, meta = "") {
+      renderBubble(role, text, meta);
+      if (state.tempMode) return;
+      if (!state.currentSessionId) {
+        state.currentSessionId = String(Date.now());
+        state.sessions.push({ id: state.currentSessionId, title: text.slice(0, 38), messages: [] });
+      }
+      const sess = state.sessions.find((s) => s.id === state.currentSessionId);
+      if (sess) {
+        sess.messages.push({ role, text, meta });
+        localStorage.setItem("shadhin_sessions", JSON.stringify(state.sessions));
+      }
+    }
+
+    async function sendMessage(overrideText) {
+      let text = (typeof overrideText === "string" ? overrideText : promptInput.value).trim();
+      if (!text && state.attachedName) text = `Analyze attached file: ${state.attachedName}`;
+      if (!text) return;
+
+      const fileTag = state.attachedName;
+      const userLine = fileTag ? `${text}\n[📎 ${fileTag}]` : text;
+
+      switchView("viewChat");
+      pushMessage("user", userLine);
+
+      state.attachedName = "";
+      state.attachedDataUrl = "";
+      ["photoInput", "cameraInput", "fileInput"].forEach((id) => { document.getElementById(id).value = ""; });
+      document.getElementById("attachmentPill").classList.remove("active");
+
+      if (typeof overrideText !== "string") {
+        promptInput.value = "";
+        updateSendVisibility();
+      }
+
+      const metaLabel = `${state.model} • ${state.mode}${state.tempMode ? " • Temp" : ""}`;
+
+      if (state.endpoint) {
+        try {
+          const headers = { "Content-Type": "application/json" };
+          if (state.apiKey) headers["Authorization"] = `Bearer ${state.apiKey}`;
+
+          const payload = {
+            model: state.modelId || state.model,
+            messages: [{ role: "user", content: userLine }],
+            prompt: userLine,
+            mode: state.mode
+          };
+
+          const res = await fetch(state.endpoint, {
+            method: "POST",
+            headers,
+            body: JSON.stringify(payload)
+          });
+
+          const raw = await res.text();
+          let reply = raw;
+          try {
+            const parsed = JSON.parse(raw);
+            reply =
+              parsed?.choices?.[0]?.message?.content ||
+              parsed?.response ||
+              parsed?.output ||
+              parsed?.text ||
+              raw;
+          } catch (_) {}
+
+          pushMessage("ai", reply || "Empty response from endpoint.", metaLabel);
+          return;
+        } catch (err) {
+          pushMessage("ai", `Endpoint request failed: ${err.message}`, metaLabel);
+          return;
+        }
+      }
+
+      pushMessage(
+        "ai",
+        `[${metaLabel}]\n"${text}"\n\nTap "Model Link" at the top right to paste any API / Server Endpoint URL so responses run live from your chosen model.`,
+        metaLabel
+      );
+    }
+
+    sendBtn.onclick = () => sendMessage();
+
+    /* Initial render */
+    syncTopModelLabel();
+    syncAccountsUI();
+    renderModelPopover();
+    renderDrawerLists();
   </script>
 </body>
 </html>
