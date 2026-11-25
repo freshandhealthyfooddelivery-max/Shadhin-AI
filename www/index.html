@@ -33,7 +33,6 @@
       overflow: hidden;
     }
 
-    /* Splash Screen: shows NAHIM once on launch */
     #splash-screen {
       position: fixed;
       inset: 0;
@@ -73,7 +72,6 @@
       font-weight: 500;
     }
 
-    /* Shell */
     .app-shell {
       display: flex;
       flex-direction: column;
@@ -127,7 +125,7 @@
       border: none;
       background: transparent;
       color: var(--text-main);
-      font-size: 15px;
+      font-size: 14.5px;
       font-weight: 500;
       cursor: pointer;
       max-width: 165px;
@@ -136,12 +134,8 @@
       text-overflow: ellipsis;
     }
 
-    .model-trigger:active {
-      background: var(--bg-surface);
-    }
-
     .api-pill-btn {
-      padding: 6px 12px;
+      padding: 6px 11px;
       border-radius: 999px;
       border: 1px solid var(--border-subtle);
       background: #1a2639;
@@ -165,7 +159,6 @@
       flex-shrink: 0;
     }
 
-    /* Model Popover Menu (matches 01:29) */
     .model-popover {
       position: fixed;
       top: 54px;
@@ -238,7 +231,6 @@
       background: var(--bg-elevated);
     }
 
-    /* Main Workspace Views */
     .main-area {
       flex: 1;
       overflow-y: auto;
@@ -257,7 +249,6 @@
       display: flex;
     }
 
-    /* Home View (matches 00:00 - 00:04) */
     .home-center {
       margin: auto 0;
       display: flex;
@@ -299,11 +290,6 @@
       cursor: pointer;
     }
 
-    .suggestion-row:active {
-      background: var(--bg-surface);
-    }
-
-    /* Temporary Chat View (matches 01:36) */
     .temp-center {
       margin: auto 0;
       display: flex;
@@ -314,7 +300,6 @@
       padding: 20px;
     }
 
-    /* Sub-pages: Library, Images, Scheduled, Students, Customise */
     .page-heading {
       font-size: 20px;
       font-weight: 500;
@@ -373,7 +358,6 @@
       font-weight: 600;
     }
 
-    /* Chat Messages */
     .chat-list {
       display: flex;
       flex-direction: column;
@@ -411,7 +395,6 @@
       color: var(--text-muted);
     }
 
-    /* Bottom Composer (matches 00:00 & 00:25 Live waveform bar) */
     .bottom-wrap {
       padding: 6px 12px calc(12px + env(safe-area-inset-bottom));
       background: transparent;
@@ -495,7 +478,6 @@
       display: inline-flex;
     }
 
-    /* Live Voice Bar (matches 00:25) */
     .live-bar {
       display: none;
       align-items: center;
@@ -523,7 +505,6 @@
       to { opacity: 1; }
     }
 
-    /* Full-height Navigation Drawer (matches 00:33 - 01:26) */
     .drawer-overlay {
       position: fixed;
       inset: 0;
@@ -600,10 +581,6 @@
       cursor: pointer;
     }
 
-    .history-row:active {
-      background: var(--bg-elevated);
-    }
-
     .drawer-footer {
       margin-top: auto;
       padding-top: 10px;
@@ -614,7 +591,6 @@
       gap: 8px;
     }
 
-    /* Bottom Sheet (matches 00:05 - 00:20) */
     .sheet-overlay {
       position: fixed;
       inset: 0;
@@ -696,7 +672,6 @@
       margin-top: 2px;
     }
 
-    /* Full Account & Custom Model Link Modal (matches 01:41 - 01:53) */
     .full-modal {
       position: fixed;
       inset: 0;
@@ -744,6 +719,28 @@
       cursor: pointer;
     }
 
+    .saved-model-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: #121316;
+      border: 1px solid var(--border-subtle);
+      margin-top: 8px;
+    }
+
+    .mini-del-btn {
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: #282a2e;
+      color: #f28b82;
+      font-size: 11.5px;
+      cursor: pointer;
+    }
+
     .toast {
       position: fixed;
       bottom: 84px;
@@ -764,7 +761,6 @@
   </style>
 </head>
 <body>
-  <!-- Splash Screen: shows NAHIM once -->
   <div id="splash-screen">
     <div class="sparkle-icon"></div>
     <div class="splash-title">Shadhin -AI</div>
@@ -772,23 +768,21 @@
   </div>
 
   <div class="app-shell">
-    <!-- Top Header Bar -->
     <header class="topbar">
       <div class="topbar-left">
         <button class="icon-btn" id="openDrawerBtn" title="Menu">☰</button>
         <button class="model-trigger" id="modelPopoverBtn">
-          <span id="topModelLabel">Shadhin Auto</span>
+          <span id="topModelLabel">Gemini 2.5 Pro • Auto</span>
           <span>▾</span>
         </button>
       </div>
       <div class="topbar-right">
         <button class="icon-btn" id="tempChatToggleBtn" title="Temporary Chat">✎</button>
-        <button class="api-pill-btn" id="openApiSetupBtn">Model Link</button>
+        <button class="api-pill-btn" id="openApiSetupBtn">Models & Lang</button>
         <button class="avatar-btn" id="openAccountModalBtn">S</button>
       </div>
     </header>
 
-    <!-- Model & Mode Popover (01:29) -->
     <div class="model-popover" id="modelPopover">
       <div class="mode-pills-row" id="modeRow">
         <button class="mode-pill-btn active" data-mode="Auto">Auto</button>
@@ -806,13 +800,11 @@
       <div class="pop-section-label">Leonardo AI Models</div>
       <div id="leonardoModelList"></div>
 
-      <div class="pop-section-label">Custom Added Models</div>
+      <div class="pop-section-label">Saved Multi-Model Links</div>
       <div id="customModelList"></div>
     </div>
 
-    <!-- Main Dynamic Workspace -->
     <main class="main-area" id="mainArea">
-      <!-- 1. Home View (00:00) -->
       <section class="view-section active" id="viewHome">
         <div class="home-center">
           <div class="sparkle-icon"></div>
@@ -831,12 +823,10 @@
         </div>
       </section>
 
-      <!-- 2. Chat View -->
       <section class="view-section" id="viewChat">
         <div class="chat-list" id="chatList"></div>
       </section>
 
-      <!-- 3. Temporary Chat View (01:36) -->
       <section class="view-section" id="viewTemp">
         <div class="temp-center">
           <div style="font-size:32px;">💬</div>
@@ -848,7 +838,6 @@
         </div>
       </section>
 
-      <!-- 4. Library View (00:44) -->
       <section class="view-section" id="viewLibrary">
         <div class="page-heading">Library</div>
         <div class="pop-section-label">Documents</div>
@@ -859,7 +848,6 @@
         </div>
       </section>
 
-      <!-- 5. Images Templates View (00:50) -->
       <section class="view-section" id="viewImages">
         <div class="home-center" style="margin:12px 0 16px;">
           <div style="font-size:26px;">🖼</div>
@@ -875,7 +863,6 @@
         </div>
       </section>
 
-      <!-- 6. Scheduled View (00:55) -->
       <section class="view-section" id="viewScheduled">
         <div class="page-heading">Scheduled</div>
         <div style="font-size:13px;color:#9aa0a6;margin-bottom:14px;">
@@ -900,7 +887,6 @@
         </div>
       </section>
 
-      <!-- 7. Students View (01:00) -->
       <section class="view-section" id="viewStudents">
         <div class="page-heading" style="text-align:center;">Level up your studying</div>
         <div class="template-grid" style="margin-bottom:14px;">
@@ -921,7 +907,6 @@
         </div>
       </section>
 
-      <!-- 8. Customise View (01:06) -->
       <section class="view-section" id="viewCustomise">
         <div class="tabs-bar">
           <button class="tab-btn active" data-ctab="discover">Discover</button>
@@ -933,7 +918,6 @@
       </section>
     </main>
 
-    <!-- Bottom Composer Bar (matches 00:00 & 00:25 Live Voice Bar) -->
     <div class="bottom-wrap">
       <div class="attachment-pill" id="attachmentPill">
         <span id="attachmentText">Attached</span>
@@ -965,12 +949,10 @@
     </div>
   </div>
 
-  <!-- Hidden File Inputs -->
   <input type="file" id="photoInput" accept="image/*" style="display:none;" />
   <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none;" />
   <input type="file" id="fileInput" accept="*/*" style="display:none;" />
 
-  <!-- Left Navigation Drawer (00:33) -->
   <div class="drawer-overlay" id="drawerOverlay">
     <aside class="nav-drawer">
       <div class="drawer-header">
@@ -1007,12 +989,11 @@
           <span class="avatar-btn" id="drawerAvatarBadge" style="width:28px;height:28px;font-size:12px;display:inline-flex;align-items:center;justify-content:center;">S</span>
           <span id="drawerAccountName" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Shadhin</span>
         </button>
-        <button class="api-pill-btn" id="drawerModelLinkBtn">Model Link</button>
+        <button class="api-pill-btn" id="drawerModelLinkBtn">Models & Lang</button>
       </div>
     </aside>
   </div>
 
-  <!-- Bottom Sheet for + Button (00:05 - 00:20) -->
   <div class="sheet-overlay" id="plusSheetOverlay">
     <div class="bottom-sheet">
       <div class="sheet-handle"></div>
@@ -1101,46 +1082,56 @@
     </div>
   </div>
 
-  <!-- Full-Screen Account & Custom Model Link Setup Modal (01:41 - 01:53) -->
+  <!-- Full-Screen Account, Multi-Model & Multi-Language Modal -->
   <div class="full-modal" id="accountModal">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-      <span style="font-size:18px;font-weight:500;">Account & Model Endpoints</span>
+      <span style="font-size:18px;font-weight:500;">Accounts, Models & Languages</span>
       <button class="icon-btn" id="closeAccountModalBtn">✕</button>
     </div>
 
-    <!-- Active Account & Switcher -->
+    <!-- Language & Speech Settings -->
     <div class="account-card">
-      <div style="display:flex;justify-content:space-between;align-items:center;" id="toggleAccountListRow">
-        <div>
-          <div style="font-weight:600;font-size:15px;" id="modalCurrentAccName">Shadhin</div>
-          <div style="font-size:12.5px;color:#9aa0a6;" id="modalCurrentAccEmail">shadhin@local.app</div>
-        </div>
-        <span>▾</span>
-      </div>
-
-      <div id="accountSwitcherSection" style="margin-top:12px;">
-        <div id="savedAccountsList"></div>
-        <input type="text" class="input-box" id="newAccName" placeholder="Add account name" />
-        <input type="email" class="input-box" id="newAccEmail" placeholder="Add account email" />
-        <button class="btn-primary" id="saveNewAccountBtn">＋ Add another account</button>
-      </div>
+      <div style="font-weight:600;font-size:15px;">🌐 App & Response Language</div>
+      <div class="tool-sub" style="margin-bottom:8px;">Choose preferred reply and voice recognition language</div>
+      <select class="input-box" id="languageSelect">
+        <option value="Auto / User Language">Auto / Match User Language</option>
+        <option value="Bengali (বাংলা)">বাংলা (Bengali)</option>
+        <option value="English">English</option>
+        <option value="Hindi (हिन्दी)">हिन्दी (Hindi)</option>
+        <option value="Arabic (العربية)">العربية (Arabic)</option>
+        <option value="Spanish (Español)">Español (Spanish)</option>
+        <option value="French (Français)">Français (French)</option>
+        <option value="German (Deutsch)">Deutsch (German)</option>
+        <option value="Japanese (日本語)">日本語 (Japanese)</option>
+        <option value="Korean (한국어)">한국어 (Korean)</option>
+      </select>
     </div>
 
-    <!-- Model Link & API Configuration System -->
+    <!-- Account Switcher -->
     <div class="account-card">
-      <div style="font-weight:600;font-size:15px;margin-bottom:4px;">🔗 Add & Connect AI Model Link</div>
-      <div style="font-size:12px;color:#9aa0a6;line-height:1.45;">
-        Paste any OpenAI-compatible, OpenRouter, Ollama, Groq, or custom server endpoint URL & API key. Once saved, prompts sent in chat will call your link directly.
-      </div>
-
-      <input type="text" class="input-box" id="customModelLabelInput" placeholder="Model display name (e.g. Gemini 2.5 Pro / Kling / Llama)" />
-      <input type="text" class="input-box" id="customModelIdInput" placeholder="Model ID (e.g. google/gemini-2.5-pro or llama3)" />
-      <input type="url" class="input-box" id="customEndpointInput" placeholder="Endpoint Link (e.g. https://openrouter.ai/api/v1/chat/completions)" />
-      <input type="password" class="input-box" id="customApiKeyInput" placeholder="API Key (optional for local/open endpoints)" />
-      <button class="btn-primary" id="saveModelLinkBtn">Save & Activate Model Link</button>
+      <div style="font-weight:600;font-size:15px;" id="modalCurrentAccName">Shadhin</div>
+      <div style="font-size:12.5px;color:#9aa0a6;" id="modalCurrentAccEmail">shadhin@local.app</div>
+      <div id="savedAccountsList" style="margin-top:8px;"></div>
+      <input type="text" class="input-box" id="newAccName" placeholder="Add account name" />
+      <input type="email" class="input-box" id="newAccEmail" placeholder="Add account email" />
+      <button class="btn-primary" id="saveNewAccountBtn">＋ Add another account</button>
     </div>
 
-    <!-- Settings & Info -->
+    <!-- Add Multiple Model Links -->
+    <div class="account-card">
+      <div style="font-weight:600;font-size:15px;margin-bottom:4px;">🔗 Add Multiple AI Models & API Keys</div>
+      <div class="tool-sub">Save as many models as you want. Each model keeps its own endpoint URL, model ID, and API key.</div>
+
+      <input type="text" class="input-box" id="customModelLabelInput" placeholder="Display Name (e.g. Gemini 2.5 Pro / Kling 2.0 / Groq Llama)" />
+      <input type="text" class="input-box" id="customModelIdInput" placeholder="Model ID (e.g. gemini-2.5-pro or llama-3.3-70b-versatile)" />
+      <input type="url" class="input-box" id="customEndpointInput" placeholder="Endpoint URL (e.g. https://generativelanguage.googleapis.com/v1beta)" />
+      <input type="password" class="input-box" id="customApiKeyInput" placeholder="API Key for this model" />
+      <button class="btn-primary" id="saveModelLinkBtn">Save & Activate Model</button>
+
+      <div class="pop-section-label" style="margin-top:14px;">Saved Model Profiles</div>
+      <div id="savedProfilesList"></div>
+    </div>
+
     <div class="account-card">
       <button class="tool-row" id="clearAllDataBtn">
         <span>🗑 Clear saved chat history</span>
@@ -1154,7 +1145,6 @@
   <div class="toast" id="toastBox"></div>
 
   <script>
-    // 1. Splash screen disappears after launch
     window.addEventListener("DOMContentLoaded", () => {
       setTimeout(() => {
         const sp = document.getElementById("splash-screen");
@@ -1174,6 +1164,7 @@
     let state = {
       model: localStorage.getItem("shadhin_model") || "Gemini 2.5 Pro",
       mode: localStorage.getItem("shadhin_mode") || "Auto",
+      language: localStorage.getItem("shadhin_language") || "Auto / User Language",
       accounts: JSON.parse(localStorage.getItem("shadhin_accounts") || '[{"name":"Shadhin","email":"shadhin@local.app"}]'),
       activeAcc: Number(localStorage.getItem("shadhin_active_acc") || 0),
       sessions: JSON.parse(localStorage.getItem("shadhin_sessions") || "[]"),
@@ -1206,6 +1197,54 @@
       document.getElementById("topModelLabel").textContent = `${state.model} • ${state.mode}`;
     }
 
+    function activateProfile(profile) {
+      state.model = profile.name;
+      state.endpoint = profile.endpoint || "";
+      state.modelId = profile.modelId || "";
+      state.apiKey = profile.apiKey || "";
+      localStorage.setItem("shadhin_model", state.model);
+      localStorage.setItem("shadhin_endpoint", state.endpoint);
+      localStorage.setItem("shadhin_model_id", state.modelId);
+      localStorage.setItem("shadhin_api_key", state.apiKey);
+      syncTopModelLabel();
+      renderModelPopover();
+      renderSavedProfilesList();
+    }
+
+    function renderSavedProfilesList() {
+      const box = document.getElementById("savedProfilesList");
+      box.innerHTML = "";
+      if (!state.customModels.length) {
+        box.innerHTML = '<div class="tool-sub">No custom models added yet.</div>';
+        return;
+      }
+      state.customModels.forEach((p, idx) => {
+        const row = document.createElement("div");
+        row.className = "saved-model-row";
+        const activeTag = state.model === p.name ? " • Active ✓" : "";
+        row.innerHTML = `
+          <div style="flex:1;min-width:0;cursor:pointer;">
+            <div style="font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.name}${activeTag}</div>
+            <div class="tool-sub" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.modelId || "default"} • ${p.endpoint}</div>
+          </div>
+          <button class="mini-del-btn" data-del="${idx}">Remove</button>
+        `;
+        row.firstElementChild.onclick = () => {
+          activateProfile(p);
+          toast(`Switched to ${p.name}`);
+        };
+        row.querySelector("[data-del]").onclick = (e) => {
+          e.stopPropagation();
+          state.customModels.splice(idx, 1);
+          localStorage.setItem("shadhin_custom_models", JSON.stringify(state.customModels));
+          renderSavedProfilesList();
+          renderModelPopover();
+          toast("Model removed");
+        };
+        box.appendChild(row);
+      });
+    }
+
     function renderModelPopover() {
       const renderGroup = (elId, list) => {
         const el = document.getElementById(elId);
@@ -1231,22 +1270,14 @@
       const customEl = document.getElementById("customModelList");
       customEl.innerHTML = "";
       if (!state.customModels.length) {
-        customEl.innerHTML = '<div style="font-size:12px;color:#9aa0a6;padding:4px 8px;">No custom link saved yet</div>';
+        customEl.innerHTML = '<div style="font-size:12px;color:#9aa0a6;padding:4px 8px;">Tap "Models & Lang" to add models</div>';
       } else {
         state.customModels.forEach((cm) => {
           const btn = document.createElement("button");
           btn.className = "pop-option" + (state.model === cm.name ? " selected" : "");
           btn.innerHTML = `<span>🔗 ${cm.name}</span><span>${state.model === cm.name ? "✓" : ""}</span>`;
           btn.onclick = () => {
-            state.model = cm.name;
-            state.endpoint = cm.endpoint;
-            state.modelId = cm.modelId;
-            state.apiKey = cm.apiKey;
-            localStorage.setItem("shadhin_model", cm.name);
-            localStorage.setItem("shadhin_endpoint", cm.endpoint);
-            localStorage.setItem("shadhin_model_id", cm.modelId);
-            localStorage.setItem("shadhin_api_key", cm.apiKey);
-            syncTopModelLabel();
+            activateProfile(cm);
             document.getElementById("modelPopover").classList.remove("open");
             toast(`Activated ${cm.name}`);
           };
@@ -1373,7 +1404,7 @@
         skills: [
           ["Code Architect", "Structured clean code & debugging"],
           ["Deep Researcher", "Multi-step analytical summaries"],
-          ["Bengali & English Translator", "Natural bilingual translation"]
+          ["Multi-Language Assistant", "Reply in Bengali, English, Hindi, Arabic & more"]
         ]
       };
 
@@ -1396,7 +1427,6 @@
       });
     }
 
-    /* Top Bar Events */
     document.getElementById("modelPopoverBtn").onclick = (e) => {
       e.stopPropagation();
       renderModelPopover();
@@ -1432,14 +1462,21 @@
       switchView("viewHome");
     };
 
-    /* Account & Model Link Modal */
     function openAccountModal() {
+      document.getElementById("languageSelect").value = state.language;
       document.getElementById("customEndpointInput").value = state.endpoint;
       document.getElementById("customModelIdInput").value = state.modelId;
       document.getElementById("customApiKeyInput").value = state.apiKey;
       syncAccountsUI();
+      renderSavedProfilesList();
       document.getElementById("accountModal").classList.add("open");
     }
+
+    document.getElementById("languageSelect").onchange = (e) => {
+      state.language = e.target.value;
+      localStorage.setItem("shadhin_language", state.language);
+      toast(`Language: ${state.language}`);
+    };
 
     document.getElementById("openAccountModalBtn").onclick = openAccountModal;
     document.getElementById("openApiSetupBtn").onclick = openAccountModal;
@@ -1470,8 +1507,8 @@
     };
 
     document.getElementById("saveModelLinkBtn").onclick = () => {
-      const label = document.getElementById("customModelLabelInput").value.trim() || "Custom Linked Model";
       const modelId = document.getElementById("customModelIdInput").value.trim();
+      const label = document.getElementById("customModelLabelInput").value.trim() || modelId || "Custom Model";
       const endpoint = document.getElementById("customEndpointInput").value.trim();
       const apiKey = document.getElementById("customApiKeyInput").value.trim();
 
@@ -1480,25 +1517,17 @@
         return;
       }
 
-      state.endpoint = endpoint;
-      state.modelId = modelId;
-      state.apiKey = apiKey;
-      state.model = label;
-
+      const profile = { name: label, modelId: modelId || label, endpoint, apiKey };
       const existingIdx = state.customModels.findIndex((m) => m.name === label);
-      const entry = { name: label, modelId, endpoint, apiKey };
-      if (existingIdx >= 0) state.customModels[existingIdx] = entry;
-      else state.customModels.push(entry);
+      if (existingIdx >= 0) state.customModels[existingIdx] = profile;
+      else state.customModels.push(profile);
 
       localStorage.setItem("shadhin_custom_models", JSON.stringify(state.customModels));
-      localStorage.setItem("shadhin_endpoint", endpoint);
-      localStorage.setItem("shadhin_model_id", modelId);
-      localStorage.setItem("shadhin_api_key", apiKey);
-      localStorage.setItem("shadhin_model", label);
+      activateProfile(profile);
 
-      syncTopModelLabel();
-      document.getElementById("accountModal").classList.remove("open");
-      toast(`Connected: ${label}`);
+      document.getElementById("customModelLabelInput").value = "";
+      document.getElementById("customModelIdInput").value = "";
+      toast(`Saved & activated: ${label}`);
     };
 
     document.getElementById("clearAllDataBtn").onclick = () => {
@@ -1511,10 +1540,9 @@
     };
 
     document.getElementById("showHelpToastBtn").onclick = () => {
-      toast("Shadhin -AI Open Source • Built for custom endpoints");
+      toast("Shadhin -AI Open Source • Multi-Model & Multi-Language");
     };
 
-    /* Drawer Navigation Events */
     document.getElementById("openDrawerBtn").onclick = () => {
       renderDrawerLists();
       document.getElementById("drawerOverlay").classList.add("open");
@@ -1589,7 +1617,6 @@
       };
     });
 
-    /* Plus Bottom Sheet Events */
     document.getElementById("openPlusSheetBtn").onclick = () => {
       document.getElementById("plusSheetOverlay").classList.add("open");
     };
@@ -1642,9 +1669,9 @@
     document.querySelectorAll("[data-prefill]").forEach((el) => {
       el.onclick = () => {
         document.getElementById("plusSheetOverlay").classList.remove("open");
-        if (document.getElementById("viewHome").classList.contains("active") === false &&
-            document.getElementById("viewChat").classList.contains("active") === false &&
-            document.getElementById("viewTemp").classList.contains("active") === false) {
+        if (!document.getElementById("viewHome").classList.contains("active") &&
+            !document.getElementById("viewChat").classList.contains("active") &&
+            !document.getElementById("viewTemp").classList.contains("active")) {
           switchView("viewHome");
         }
         const inp = document.getElementById("promptInput");
@@ -1668,7 +1695,6 @@
       el.onclick = () => sendMessage(el.dataset.prompt);
     });
 
-    /* Input, Live Voice Bar & Sending */
     const promptInput = document.getElementById("promptInput");
     const sendBtn = document.getElementById("sendBtn");
     const liveModeBtn = document.getElementById("liveModeBtn");
@@ -1701,6 +1727,19 @@
       sendMessage("Voice live prompt");
     };
 
+    function getSpeechLangCode() {
+      if (state.language.includes("Bengali")) return "bn-BD";
+      if (state.language.includes("Hindi")) return "hi-IN";
+      if (state.language.includes("Arabic")) return "ar-SA";
+      if (state.language.includes("Spanish")) return "es-ES";
+      if (state.language.includes("French")) return "fr-FR";
+      if (state.language.includes("German")) return "de-DE";
+      if (state.language.includes("Japanese")) return "ja-JP";
+      if (state.language.includes("Korean")) return "ko-KR";
+      if (state.language.includes("English")) return "en-US";
+      return "bn-BD";
+    }
+
     document.getElementById("micBtn").onclick = () => {
       const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SR) {
@@ -1710,7 +1749,7 @@
       }
       try {
         const rec = new SR();
-        rec.lang = "bn-BD";
+        rec.lang = getSpeechLangCode();
         rec.onresult = (ev) => {
           promptInput.value = ev.results[0][0].transcript;
           updateSendVisibility();
@@ -1763,6 +1802,11 @@
 
       const fileTag = state.attachedName;
       const userLine = fileTag ? `${text}\n[📎 ${fileTag}]` : text;
+      const langInstruction =
+        state.language && state.language !== "Auto / User Language"
+          ? `Respond in ${state.language}. `
+          : "";
+      const finalPrompt = `${langInstruction}${userLine}`;
 
       switchView("viewChat");
       pushMessage("user", userLine);
@@ -1777,31 +1821,55 @@
         updateSendVisibility();
       }
 
-      const metaLabel = `${state.model} • ${state.mode}${state.tempMode ? " • Temp" : ""}`;
+      const metaLabel = `${state.model} • ${state.mode} • ${state.language}`;
 
       if (state.endpoint) {
         try {
+          const isGeminiNative = state.endpoint.includes("generativelanguage.googleapis.com");
           const headers = { "Content-Type": "application/json" };
-          if (state.apiKey) headers["Authorization"] = `Bearer ${state.apiKey}`;
+          let url = state.endpoint.replace(/\/+$/, "");
+          let payload;
 
-          const payload = {
-            model: state.modelId || state.model,
-            messages: [{ role: "user", content: userLine }],
-            prompt: userLine,
-            mode: state.mode
-          };
+          if (isGeminiNative) {
+            const mId = state.modelId || "gemini-2.5-flash";
+            if (!url.includes(":generateContent")) {
+              url = `${url}/models/${encodeURIComponent(mId)}:generateContent`;
+            }
+            if (state.apiKey && !url.includes("key=")) {
+              const sep = url.includes("?") ? "&" : "?";
+              url = `${url}${sep}key=${encodeURIComponent(state.apiKey)}`;
+            }
+            payload = {
+              contents: [{ parts: [{ text: finalPrompt }] }]
+            };
+          } else {
+            if (state.apiKey) headers["Authorization"] = `Bearer ${state.apiKey}`;
+            payload = {
+              model: state.modelId || state.model,
+              messages: [{ role: "user", content: finalPrompt }],
+              prompt: finalPrompt,
+              mode: state.mode,
+              language: state.language
+            };
+          }
 
-          const res = await fetch(state.endpoint, {
+          const res = await fetch(url, {
             method: "POST",
             headers,
             body: JSON.stringify(payload)
           });
 
           const raw = await res.text();
+          if (!res.ok) {
+            pushMessage("ai", `HTTP ${res.status}: ${raw}`, metaLabel);
+            return;
+          }
+
           let reply = raw;
           try {
             const parsed = JSON.parse(raw);
             reply =
+              parsed?.candidates?.[0]?.content?.parts?.[0]?.text ||
               parsed?.choices?.[0]?.message?.content ||
               parsed?.response ||
               parsed?.output ||
@@ -1819,17 +1887,17 @@
 
       pushMessage(
         "ai",
-        `[${metaLabel}]\n"${text}"\n\nTap "Model Link" at the top right to paste any API / Server Endpoint URL so responses run live from your chosen model.`,
+        `[${metaLabel}]\n"${text}"\n\nTap "Models & Lang" at the top right to add multiple model links, API keys, and languages.`,
         metaLabel
       );
     }
 
     sendBtn.onclick = () => sendMessage();
 
-    /* Initial render */
     syncTopModelLabel();
     syncAccountsUI();
     renderModelPopover();
+    renderSavedProfilesList();
     renderDrawerLists();
   </script>
 </body>
