@@ -128,7 +128,7 @@
       font-size: 14.5px;
       font-weight: 500;
       cursor: pointer;
-      max-width: 165px;
+      max-width: 195px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -162,10 +162,10 @@
     .model-popover {
       position: fixed;
       top: 54px;
-      left: 16px;
-      right: 16px;
-      max-width: 390px;
-      max-height: 76dvh;
+      left: 14px;
+      right: 14px;
+      max-width: 420px;
+      max-height: 78dvh;
       overflow-y: auto;
       background: #202124;
       border: 1px solid var(--border-subtle);
@@ -210,25 +210,58 @@
       text-transform: uppercase;
       letter-spacing: 0.6px;
       margin: 10px 4px 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    .pop-option {
-      width: 100%;
-      padding: 10px 12px;
+    .pop-item-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 4px 6px;
       border-radius: 12px;
+      margin-bottom: 4px;
+      background: #17181b;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .pop-item-wrap.selected {
+      background: #242936;
+      border-color: rgba(168, 199, 250, 0.35);
+    }
+
+    .pop-select-btn {
+      flex: 1;
+      padding: 7px 6px;
       border: none;
       background: transparent;
       color: var(--text-main);
       text-align: left;
       cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 13.5px;
+      font-size: 13px;
+      min-width: 0;
     }
 
-    .pop-option:hover, .pop-option.selected {
-      background: var(--bg-elevated);
+    .pop-item-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      white-space: normal;
+      word-break: break-all;
+      margin-top: 2px;
+    }
+
+    .pop-edit-btn {
+      padding: 5px 9px;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: #282a2e;
+      color: var(--accent-blue);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      flex-shrink: 0;
     }
 
     .main-area {
@@ -388,6 +421,7 @@
       font-size: 14.5px;
       line-height: 1.6;
       white-space: pre-wrap;
+      word-break: break-word;
     }
 
     .msg-meta {
@@ -721,6 +755,19 @@
       cursor: pointer;
     }
 
+    .btn-secondary {
+      width: 100%;
+      padding: 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: #25272c;
+      color: var(--text-main);
+      font-weight: 500;
+      font-size: 13px;
+      margin-top: 8px;
+      cursor: pointer;
+    }
+
     .saved-model-row {
       display: flex;
       align-items: flex-start;
@@ -773,37 +820,39 @@
   <div class="app-shell">
     <header class="topbar">
       <div class="topbar-left">
-        <button class="icon-btn" id="openDrawerBtn" title="Menu">☰</button>
-        <button class="model-trigger" id="modelPopoverBtn">
-          <span id="topModelLabel">Gemini 2.5 Pro • Auto</span>
+        <button type="button" class="icon-btn" id="openDrawerBtn" title="Menu">☰</button>
+        <button type="button" class="model-trigger" id="modelPopoverBtn">
+          <span id="topModelLabel">Gemini 3.8 Flash • Auto</span>
           <span>▾</span>
         </button>
       </div>
       <div class="topbar-right">
-        <button class="icon-btn" id="tempChatToggleBtn" title="Temporary Chat">✎</button>
-        <button class="api-pill-btn" id="openApiSetupBtn">Models & Lang</button>
-        <button class="avatar-btn" id="openAccountModalBtn">S</button>
+        <button type="button" class="icon-btn" id="tempChatToggleBtn" title="Temporary Chat">✎</button>
+        <button type="button" class="avatar-btn" id="openAccountModalBtn" title="Gmail / Account">G</button>
       </div>
     </header>
 
     <div class="model-popover" id="modelPopover">
       <div class="mode-pills-row" id="modeRow">
-        <button class="mode-pill-btn active" data-mode="Auto">Auto</button>
-        <button class="mode-pill-btn" data-mode="Low">Low</button>
-        <button class="mode-pill-btn" data-mode="Medium">Medium</button>
-        <button class="mode-pill-btn" data-mode="High">High</button>
+        <button type="button" class="mode-pill-btn active" data-mode="Auto">Auto</button>
+        <button type="button" class="mode-pill-btn" data-mode="Low">Low</button>
+        <button type="button" class="mode-pill-btn" data-mode="Medium">Medium</button>
+        <button type="button" class="mode-pill-btn" data-mode="High">High</button>
       </div>
 
-      <div class="pop-section-label">Google Models</div>
+      <div class="pop-section-label">
+        <span>Google Models</span>
+        <button type="button" class="pop-edit-btn" id="addCustomModelInPopBtn">＋ Add Model</button>
+      </div>
       <div id="googleModelList"></div>
 
-      <div class="pop-section-label">Kling AI Models</div>
+      <div class="pop-section-label"><span>Kling AI Models</span></div>
       <div id="klingModelList"></div>
 
-      <div class="pop-section-label">Leonardo AI Models</div>
+      <div class="pop-section-label"><span>Leonardo AI Models</span></div>
       <div id="leonardoModelList"></div>
 
-      <div class="pop-section-label">Saved Multi-Model Links</div>
+      <div class="pop-section-label"><span>Custom / Saved Models</span></div>
       <div id="customModelList"></div>
     </div>
 
@@ -814,13 +863,13 @@
           <div class="hero-greeting" id="heroGreeting">Hi Shadhin, what's on your mind?</div>
         </div>
         <div class="suggestion-list">
-          <button class="suggestion-row" data-prompt="Translate essential Bengali phrases">
+          <button type="button" class="suggestion-row" data-prompt="Translate essential Bengali phrases">
             <span>📖</span><span>Translate essential Bengali phrases</span>
           </button>
-          <button class="suggestion-row" data-prompt="Find the subject that I'm best at">
+          <button type="button" class="suggestion-row" data-prompt="Find the subject that I'm best at">
             <span>👤</span><span>Find the subject that I'm best at</span>
           </button>
-          <button class="suggestion-row" data-prompt="Tell me if a product is worth it">
+          <button type="button" class="suggestion-row" data-prompt="Tell me if a product is worth it">
             <span>↪</span><span>Tell me if a product is worth it</span>
           </button>
         </div>
@@ -837,15 +886,15 @@
           <div style="font-size:13.5px;color:#9aa0a6;max-width:320px;line-height:1.5;">
             Temporary chats don't appear in recent chats and aren't saved to history.
           </div>
-          <button class="api-pill-btn" id="closeTempViewBtn" style="margin-top:8px;">✕ Exit Temporary Chat</button>
+          <button type="button" class="api-pill-btn" id="closeTempViewBtn" style="margin-top:8px;">✕ Exit Temporary Chat</button>
         </div>
       </section>
 
       <section class="view-section" id="viewLibrary">
         <div class="page-heading">Library</div>
-        <div class="pop-section-label">Documents</div>
+        <div class="pop-section-label"><span>Documents</span></div>
         <div id="libraryDocsList"></div>
-        <div class="pop-section-label">Media</div>
+        <div class="pop-section-label"><span>Media</span></div>
         <div class="card-box" id="libraryMediaBox" style="text-align:center;color:#9aa0a6;padding:28px 14px;">
           Images, videos and music that you create will appear here
         </div>
@@ -871,7 +920,7 @@
         <div style="font-size:13px;color:#9aa0a6;margin-bottom:14px;">
           Let Shadhin -AI handle routines, track updates and take action for you.
         </div>
-        <div class="pop-section-label">Suggested</div>
+        <div class="pop-section-label"><span>Suggested</span></div>
         <div class="card-box" data-prompt="Create a daily news digest on topics I care about">
           <strong>Create a news digest</strong>
           <div class="tool-sub">Get a daily deep dive on any topic I'm curious about.</div>
@@ -902,19 +951,19 @@
             <div class="tool-sub">Structured lessons & practice</div>
           </div>
         </div>
-        <div class="pop-section-label">Your study notebooks</div>
+        <div class="pop-section-label"><span>Your study notebooks</span></div>
         <div class="card-box">
           <strong>Learning tailored to you</strong>
           <div class="tool-sub">Set up a study notebook to get custom lessons and track your progress.</div>
-          <button class="api-pill-btn" id="studentNewNotebookBtn" style="margin-top:10px;">＋ New notebook</button>
+          <button type="button" class="api-pill-btn" id="studentNewNotebookBtn" style="margin-top:10px;">＋ New notebook</button>
         </div>
       </section>
 
       <section class="view-section" id="viewCustomise">
         <div class="tabs-bar">
-          <button class="tab-btn active" data-ctab="discover">Discover</button>
-          <button class="tab-btn" data-ctab="connectors">Connectors</button>
-          <button class="tab-btn" data-ctab="skills">Skills</button>
+          <button type="button" class="tab-btn active" data-ctab="discover">Discover</button>
+          <button type="button" class="tab-btn" data-ctab="connectors">Connectors</button>
+          <button type="button" class="tab-btn" data-ctab="skills">Skills</button>
         </div>
         <div class="page-heading">Customise your chats</div>
         <div id="customiseTabBody"></div>
@@ -924,11 +973,11 @@
     <div class="bottom-wrap">
       <div class="attachment-pill" id="attachmentPill">
         <span id="attachmentText">Attached</span>
-        <button class="icon-btn" id="removeAttachmentBtn" style="width:24px;height:24px;font-size:13px;">✕</button>
+        <button type="button" class="icon-btn" id="removeAttachmentBtn" style="width:24px;height:24px;font-size:13px;">✕</button>
       </div>
 
       <div class="composer-pill" id="normalComposer">
-        <button class="icon-btn" id="openPlusSheetBtn" title="Add & Tools">＋</button>
+        <button type="button" class="icon-btn" id="openPlusSheetBtn" title="Add & Tools">＋</button>
         <input
           type="text"
           class="composer-input"
@@ -936,17 +985,17 @@
           placeholder="Ask Shadhin -AI"
           autocomplete="off"
         />
-        <button class="icon-btn" id="micBtn" title="Voice Input">🎤</button>
-        <button class="live-wave-btn" id="liveModeBtn" title="Live Voice">ılı</button>
-        <button class="send-arrow-btn" id="sendBtn" title="Send">↑</button>
+        <button type="button" class="icon-btn" id="micBtn" title="Voice Input">🎤</button>
+        <button type="button" class="live-wave-btn" id="liveModeBtn" title="Live Voice">ılı</button>
+        <button type="button" class="send-arrow-btn" id="sendBtn" title="Send">↑</button>
       </div>
 
       <div class="live-bar" id="liveVoiceBar">
-        <button class="icon-btn" id="livePlusBtn">＋</button>
+        <button type="button" class="icon-btn" id="livePlusBtn">＋</button>
         <span class="wave-dots">•••••••••••</span>
         <div style="display:flex;gap:6px;">
-          <button class="icon-btn" id="stopLiveBtn" title="Stop">□</button>
-          <button class="send-arrow-btn visible" id="sendLiveBtn" title="Send">↑</button>
+          <button type="button" class="icon-btn" id="stopLiveBtn" title="Stop">□</button>
+          <button type="button" class="send-arrow-btn visible" id="sendLiveBtn" title="Send">↑</button>
         </div>
       </div>
     </div>
@@ -955,44 +1004,44 @@
   <input type="file" id="photoInput" accept="image/*" style="display:none;" />
   <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none;" />
   <input type="file" id="fileInput" accept="*/*" style="display:none;" />
+  <input type="file" id="apiConfigFileInput" accept=".json,.txt,.env,.yaml,.yml,application/json,text/plain,*/*" style="display:none;" />
 
   <div class="drawer-overlay" id="drawerOverlay">
     <aside class="nav-drawer">
       <div class="drawer-header">
         <span style="font-size:18px;font-weight:500;">Shadhin -AI</span>
         <div>
-          <button class="icon-btn" id="drawerSearchBtn" title="Search">🔍</button>
-          <button class="icon-btn" id="closeDrawerBtn" title="Close">✕</button>
+          <button type="button" class="icon-btn" id="drawerSearchBtn" title="Search">🔍</button>
+          <button type="button" class="icon-btn" id="closeDrawerBtn" title="Close">✕</button>
         </div>
       </div>
 
       <input type="text" class="input-box" id="chatSearchInput" placeholder="Search chats..." style="display:none;margin:0 0 8px;" />
 
-      <button class="drawer-item active" data-nav="home">✎ <span>New chat</span></button>
-      <button class="drawer-item" data-nav="library">⊞ <span>Library</span></button>
-      <button class="drawer-item" data-nav="images">🖼 <span>Images</span></button>
-      <button class="drawer-item" data-nav="scheduled">🕒 <span>Scheduled</span></button>
-      <button class="drawer-item" data-nav="students">🎓 <span>Students</span></button>
+      <button type="button" class="drawer-item active" data-nav="home">✎ <span>New chat</span></button>
+      <button type="button" class="drawer-item" data-nav="library">⊞ <span>Library</span></button>
+      <button type="button" class="drawer-item" data-nav="images">🖼 <span>Images</span></button>
+      <button type="button" class="drawer-item" data-nav="scheduled">🕒 <span>Scheduled</span></button>
+      <button type="button" class="drawer-item" data-nav="students">🎓 <span>Students</span></button>
 
-      <button class="drawer-item" id="toggleMoreBtn">⋯ <span>More</span></button>
+      <button type="button" class="drawer-item" id="toggleMoreBtn">⋯ <span>More</span></button>
       <div class="more-group" id="moreGroup">
-        <button class="drawer-item" data-nav="customise">⚙ <span>Customise</span></button>
-        <button class="drawer-item" data-nav="videos">🎬 <span>Videos</span></button>
+        <button type="button" class="drawer-item" data-nav="customise">⚙ <span>Customise</span></button>
+        <button type="button" class="drawer-item" data-nav="videos">🎬 <span>Videos</span></button>
       </div>
 
-      <div class="pop-section-label">Notebooks</div>
-      <button class="drawer-item" id="drawerAddNotebookBtn">＋ <span>New notebook</span></button>
+      <div class="pop-section-label"><span>Notebooks</span></div>
+      <button type="button" class="drawer-item" id="drawerAddNotebookBtn">＋ <span>New notebook</span></button>
       <div id="drawerNotebooksList"></div>
 
-      <div class="pop-section-label">All</div>
+      <div class="pop-section-label"><span>All</span></div>
       <div id="drawerChatsList"></div>
 
       <div class="drawer-footer">
-        <button class="drawer-item" id="drawerFooterAccount" style="padding:8px;">
-          <span class="avatar-btn" id="drawerAvatarBadge" style="width:28px;height:28px;font-size:12px;display:inline-flex;align-items:center;justify-content:center;">S</span>
-          <span id="drawerAccountName" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Shadhin</span>
+        <button type="button" class="drawer-item" id="drawerFooterAccount" style="padding:8px;">
+          <span class="avatar-btn" id="drawerAvatarBadge" style="width:28px;height:28px;font-size:12px;display:inline-flex;align-items:center;justify-content:center;">G</span>
+          <span id="drawerAccountName" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Gmail Account</span>
         </button>
-        <button class="api-pill-btn" id="drawerModelLinkBtn">Models & Lang</button>
       </div>
     </aside>
   </div>
@@ -1002,16 +1051,16 @@
       <div class="sheet-handle"></div>
 
       <div class="source-scroller">
-        <button class="source-card" id="srcPhotos"><span>🖼</span><span>Photos</span></button>
-        <button class="source-card" id="srcCamera"><span>📷</span><span>Camera</span></button>
-        <button class="source-card" data-prefill="Generate an avatar style portrait: "><span>🧑</span><span>Avatar</span></button>
-        <button class="source-card" id="srcFiles"><span>📎</span><span>Files</span></button>
-        <button class="source-card" data-prefill="Search and summarize from Drive: "><span>🔺</span><span>Drive</span></button>
-        <button class="source-card" data-prefill="Add notes to Notebook: "><span>📓</span><span>Notebooks</span></button>
-        <button class="source-card" data-prefill="Find places and route on Map: "><span>📍</span><span>Map</span></button>
+        <button type="button" class="source-card" id="srcPhotos"><span>🖼</span><span>Photos</span></button>
+        <button type="button" class="source-card" id="srcCamera"><span>📷</span><span>Camera</span></button>
+        <button type="button" class="source-card" data-prefill="Generate an avatar style portrait: "><span>🧑</span><span>Avatar</span></button>
+        <button type="button" class="source-card" id="srcFiles"><span>📎</span><span>Files</span></button>
+        <button type="button" class="source-card" data-prefill="Search and summarize from Drive: "><span>🔺</span><span>Drive</span></button>
+        <button type="button" class="source-card" data-prefill="Add notes to Notebook: "><span>📓</span><span>Notebooks</span></button>
+        <button type="button" class="source-card" data-prefill="Find places and route on Map: "><span>📍</span><span>Map</span></button>
       </div>
 
-      <button class="tool-row" data-prefill="Create image: ">
+      <button type="button" class="tool-row" data-prefill="Create image: ">
         <div class="tool-row-left">
           <span>🖼</span>
           <div>
@@ -1021,7 +1070,7 @@
         </div>
       </button>
 
-      <button class="tool-row" data-prefill="Generate video with Veo / Kling: ">
+      <button type="button" class="tool-row" data-prefill="Generate video with Veo / Kling: ">
         <div class="tool-row-left">
           <span>🎬</span>
           <div>
@@ -1032,7 +1081,7 @@
         <span class="api-pill-btn">Pro</span>
       </button>
 
-      <button class="tool-row" data-prefill="Create music audio track & lyrics: ">
+      <button type="button" class="tool-row" data-prefill="Create music audio track & lyrics: ">
         <div class="tool-row-left">
           <span>🎵</span>
           <div>
@@ -1042,7 +1091,7 @@
         </div>
       </button>
 
-      <button class="tool-row" data-prefill="Open Canvas to code, write or make slides: ">
+      <button type="button" class="tool-row" data-prefill="Open Canvas to code, write or make slides: ">
         <div class="tool-row-left">
           <span>⬜</span>
           <div>
@@ -1052,7 +1101,7 @@
         </div>
       </button>
 
-      <button class="tool-row" data-prefill="Deep Research report on: ">
+      <button type="button" class="tool-row" data-prefill="Deep Research report on: ">
         <div class="tool-row-left">
           <span>🔎</span>
           <div>
@@ -1062,7 +1111,7 @@
         </div>
       </button>
 
-      <button class="tool-row" data-prefill="Guided Learning step-by-step on: ">
+      <button type="button" class="tool-row" data-prefill="Guided Learning step-by-step on: ">
         <div class="tool-row-left">
           <span>🎓</span>
           <div>
@@ -1071,29 +1120,33 @@
           </div>
         </div>
       </button>
-
-      <div class="tool-row">
-        <div class="tool-row-left">
-          <span>✨</span>
-          <div>
-            <div><strong>Personal Intelligence</strong> <span style="font-size:11px;background:#2b2d31;padding:2px 6px;border-radius:6px;">Labs</span></div>
-            <div class="tool-sub">Personalise chat if helpful</div>
-          </div>
-        </div>
-        <input type="checkbox" id="personalIntelToggle" checked style="width:20px;height:20px;" />
-      </div>
     </div>
   </div>
 
-  <div class="full-modal" id="accountModal">
+  <!-- Per-Model API & Edit Modal -->
+  <div class="full-modal" id="modelApiModal">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-      <span style="font-size:18px;font-weight:500;">Accounts, Models & Languages</span>
-      <button class="icon-btn" id="closeAccountModalBtn">✕</button>
+      <span style="font-size:18px;font-weight:500;" id="modelApiModalTitle">Configure Model API</span>
+      <button type="button" class="icon-btn" id="closeModelApiModalBtn">✕</button>
     </div>
 
     <div class="account-card">
-      <div style="font-weight:600;font-size:15px;">🌐 App & Response Language</div>
-      <div class="tool-sub" style="margin-bottom:8px;">Choose preferred reply and voice recognition language</div>
+      <div style="font-weight:600;font-size:15px;">🔧 API & Model Settings (Editable)</div>
+      <div class="tool-sub">Edit any field anytime, or upload any API file (.json / .txt / .env) to auto-fill.</div>
+
+      <button type="button" class="btn-secondary" id="pickApiConfigFileBtn">📁 Add Any API File (JSON / TXT / ENV)</button>
+
+      <input type="text" class="input-box" id="editModelNameInput" placeholder="Model Display Name" />
+      <input type="text" class="input-box" id="editModelIdInput" placeholder="Model ID (e.g. gemini-3.8-flash or llama-3.3-70b-versatile)" />
+      <input type="text" class="input-box" id="editEndpointInput" placeholder="Endpoint URL (e.g. https://generativelanguage.googleapis.com/v1beta)" />
+      <input type="text" class="input-box" id="editApiKeyInput" placeholder="API Key for this model" />
+
+      <button type="button" class="btn-primary" id="savePerModelApiBtn">Save & Activate This Model</button>
+      <button type="button" class="btn-secondary" id="deleteCustomModelBtn" style="color:#f28b82;display:none;">🗑 Delete Custom Model</button>
+    </div>
+
+    <div class="account-card">
+      <div style="font-weight:600;font-size:15px;">🌐 Response Language</div>
       <select class="input-box" id="languageSelect">
         <option value="Auto / User Language">Auto / Match User Language</option>
         <option value="Bengali (বাংলা)">বাংলা (Bengali)</option>
@@ -1107,36 +1160,35 @@
         <option value="Korean (한국어)">한국어 (Korean)</option>
       </select>
     </div>
+  </div>
 
-    <div class="account-card">
-      <div style="font-weight:600;font-size:15px;" id="modalCurrentAccName">Shadhin</div>
-      <div style="font-size:12.5px;color:#9aa0a6;" id="modalCurrentAccEmail">shadhin@local.app</div>
-      <div id="savedAccountsList" style="margin-top:8px;"></div>
-      <input type="text" class="input-box" id="newAccName" placeholder="Add account name" />
-      <input type="email" class="input-box" id="newAccEmail" placeholder="Add account email" />
-      <button class="btn-primary" id="saveNewAccountBtn">＋ Add another account</button>
+  <!-- Gmail / Google Account Modal -->
+  <div class="full-modal" id="accountModal">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <span style="font-size:18px;font-weight:500;">Gmail / Google Account</span>
+      <button type="button" class="icon-btn" id="closeAccountModalBtn">✕</button>
     </div>
 
     <div class="account-card">
-      <div style="font-weight:600;font-size:15px;margin-bottom:4px;">🔗 Add Multiple AI Models & API Keys</div>
-      <div class="tool-sub">Save as many models as you want. Each model keeps its own endpoint URL, model ID, and API key.</div>
-
-      <input type="text" class="input-box" id="customModelLabelInput" placeholder="Display Name (e.g. Gemini 2.5 Flash / Groq Llama)" />
-      <input type="text" class="input-box" id="customModelIdInput" placeholder="Model ID (e.g. gemini-2.5-flash or llama-3.3-70b-versatile)" />
-      <input type="url" class="input-box" id="customEndpointInput" placeholder="Endpoint URL (e.g. https://generativelanguage.googleapis.com/v1beta)" />
-      <input type="password" class="input-box" id="customApiKeyInput" placeholder="API Key for this model" />
-      <button class="btn-primary" id="saveModelLinkBtn">Save & Activate Model</button>
-
-      <div class="pop-section-label" style="margin-top:14px;">Saved Model Profiles</div>
-      <div id="savedProfilesList"></div>
+      <div style="font-weight:600;font-size:15px;" id="modalCurrentAccName">No Gmail Signed In</div>
+      <div style="font-size:12.5px;color:#9aa0a6;" id="modalCurrentAccEmail">Sign in with your Gmail address & password</div>
+      <div style="font-size:11.5px;color:#a8c7fa;margin-top:4px;" id="modalCurrentAccStatus">Status: Signed out</div>
+      <div id="savedAccountsList" style="margin-top:10px;"></div>
     </div>
 
     <div class="account-card">
-      <button class="tool-row" id="clearAllDataBtn">
+      <div style="font-weight:600;font-size:15px;margin-bottom:4px;">✉️ Gmail / Google Sign In</div>
+      <div class="tool-sub">Enter your Gmail address (@gmail.com / Google account) and password to log in.</div>
+
+      <input type="email" class="input-box" id="gmailAddressInput" placeholder="Gmail address (e.g. yourname@gmail.com)" autocomplete="email" />
+      <input type="password" class="input-box" id="gmailPasswordInput" placeholder="Password" autocomplete="current-password" />
+      <button type="button" class="btn-primary" id="gmailLoginBtn">Sign In with Gmail</button>
+      <button type="button" class="btn-secondary" id="gmailSignOutBtn" style="color:#f28b82;">Sign Out Current Gmail</button>
+    </div>
+
+    <div class="account-card">
+      <button type="button" class="tool-row" id="clearAllDataBtn">
         <span>🗑 Clear saved chat history</span>
-      </button>
-      <button class="tool-row" id="showHelpToastBtn">
-        <span>❓ Help & Open-Source Info (Shadhin -AI)</span>
       </button>
     </div>
   </div>
@@ -1149,37 +1201,126 @@
         const sp = document.getElementById("splash-screen");
         if (sp) {
           sp.classList.add("hidden");
-          setTimeout(() => sp.remove(), 500);
+          setTimeout(() => {
+            try { sp.remove(); } catch (_) {}
+          }, 500);
         }
-      }, 2000);
+      }, 1400);
     });
 
-    const BUILTIN_MODELS = {
-      google: ["Gemini 2.5 Pro", "Gemini 2.5 Flash", "Gemini 2.5 Flash-Lite", "Imagen 3", "Veo 2"],
-      kling: ["Kling 2.0 Master", "Kling 1.6 Pro", "Kolors Image"],
-      leonardo: ["Leonardo Phoenix 1.0", "Leonardo Kino XL", "Leonardo Lightning XL"]
+    function safeJsonParse(raw, fallback) {
+      try {
+        const parsed = JSON.parse(raw);
+        return parsed !== null && parsed !== undefined ? parsed : fallback;
+      } catch (_) {
+        return fallback;
+      }
+    }
+
+    function safeStorageSet(key, value) {
+      try {
+        localStorage.setItem(key, value);
+      } catch (_) {}
+    }
+
+    function safeStorageGet(key, fallback = "") {
+      try {
+        const v = localStorage.getItem(key);
+        return v !== null ? v : fallback;
+      } catch (_) {
+        return fallback;
+      }
+    }
+
+    function cleanUrlInput(rawUrl) {
+      if (!rawUrl || typeof rawUrl !== "string") return "";
+      let s = rawUrl.trim();
+      const mdMatch = s.match(/\[[^\]]*\]\((https?:\/\/[^)\s]+)\)/i);
+      if (mdMatch && mdMatch[1]) {
+        s = mdMatch[1];
+      }
+      s = s.replace(/^\[+|\]+$/g, "").trim();
+      s = s.replace(/^https?:\/\//i, (m) => m.toLowerCase());
+      return s;
+    }
+
+    const BUILTIN_SEEDS = {
+      google: [
+        { name: "Gemini 3.8 Flash", modelId: "gemini-3.8-flash", endpoint: "https://generativelanguage.googleapis.com/v1beta", apiKey: "" },
+        { name: "Gemini 2.5 Pro", modelId: "gemini-2.5-pro", endpoint: "https://generativelanguage.googleapis.com/v1beta", apiKey: "" },
+        { name: "Gemini 2.5 Flash-Lite", modelId: "gemini-2.5-flash-lite", endpoint: "https://generativelanguage.googleapis.com/v1beta", apiKey: "" },
+        { name: "Imagen 3", modelId: "imagen-3.0-generate-002", endpoint: "https://generativelanguage.googleapis.com/v1beta", apiKey: "" },
+        { name: "Veo 2", modelId: "veo-2.0-generate-001", endpoint: "https://generativelanguage.googleapis.com/v1beta", apiKey: "" }
+      ],
+      kling: [
+        { name: "Kling 2.0 Master", modelId: "kling-v2-master", endpoint: "", apiKey: "" },
+        { name: "Kling 1.6 Pro", modelId: "kling-v1-6", endpoint: "", apiKey: "" },
+        { name: "Kolors Image", modelId: "kolors-v1-5", endpoint: "", apiKey: "" }
+      ],
+      leonardo: [
+        { name: "Leonardo Phoenix 1.0", modelId: "leonardo-phoenix-1.0", endpoint: "", apiKey: "" },
+        { name: "Leonardo Kino XL", modelId: "leonardo-kino-xl", endpoint: "", apiKey: "" },
+        { name: "Leonardo Lightning XL", modelId: "leonardo-lightning-xl", endpoint: "", apiKey: "" }
+      ]
     };
 
+    function buildDefaultCatalog() {
+      const out = [];
+      ["google", "kling", "leonardo"].forEach((grp) => {
+        BUILTIN_SEEDS[grp].forEach((item) => {
+          out.push({
+            id: `${grp}__${item.name}`,
+            group: grp,
+            isCustom: false,
+            name: item.name,
+            modelId: item.modelId,
+            endpoint: item.endpoint,
+            apiKey: item.apiKey
+          });
+        });
+      });
+      return out;
+    }
+
     let state = {
-      model: localStorage.getItem("shadhin_model") || "Gemini 2.5 Pro",
-      mode: localStorage.getItem("shadhin_mode") || "Auto",
-      language: localStorage.getItem("shadhin_language") || "Auto / User Language",
-      accounts: JSON.parse(localStorage.getItem("shadhin_accounts") || '[{"name":"Shadhin","email":"shadhin@local.app"}]'),
-      activeAcc: Number(localStorage.getItem("shadhin_active_acc") || 0),
-      sessions: JSON.parse(localStorage.getItem("shadhin_sessions") || "[]"),
-      notebooks: JSON.parse(localStorage.getItem("shadhin_notebooks") || '["Study Notes"]'),
-      customModels: JSON.parse(localStorage.getItem("shadhin_custom_models") || "[]"),
-      endpoint: localStorage.getItem("shadhin_endpoint") || "",
-      modelId: localStorage.getItem("shadhin_model_id") || "",
-      apiKey: localStorage.getItem("shadhin_api_key") || "",
+      modelConfigs: safeJsonParse(safeStorageGet("shadhin_model_configs", ""), null),
+      activeModelIdKey: safeStorageGet("shadhin_active_model_key", "google__Gemini 3.8 Flash"),
+      model: safeStorageGet("shadhin_model", "Gemini 3.8 Flash"),
+      mode: safeStorageGet("shadhin_mode", "Auto"),
+      language: safeStorageGet("shadhin_language", "Auto / User Language"),
+      gmailAccounts: safeJsonParse(safeStorageGet("shadhin_gmail_accounts", ""), []),
+      activeGmailIndex: Number(safeStorageGet("shadhin_active_gmail_idx", "-1")),
+      sessions: safeJsonParse(safeStorageGet("shadhin_sessions", ""), []),
+      notebooks: safeJsonParse(safeStorageGet("shadhin_notebooks", ""), ["Study Notes"]),
       currentSessionId: null,
       tempMode: false,
       attachedName: "",
-      attachedDataUrl: ""
+      attachedDataUrl: "",
+      isSending: false,
+      editingKey: null,
+      addingNewModel: false
     };
+
+    if (!Array.isArray(state.modelConfigs) || !state.modelConfigs.length) {
+      state.modelConfigs = buildDefaultCatalog();
+      safeStorageSet("shadhin_model_configs", JSON.stringify(state.modelConfigs));
+    }
+    if (!Array.isArray(state.gmailAccounts)) state.gmailAccounts = [];
+    if (!Array.isArray(state.sessions)) state.sessions = [];
+    if (!Array.isArray(state.notebooks)) state.notebooks = ["Study Notes"];
+
+    function getActiveModelConfig() {
+      const found = state.modelConfigs.find((m) => m.id === state.activeModelIdKey);
+      return found || state.modelConfigs[0];
+    }
+
+    function saveModelConfigs() {
+      safeStorageSet("shadhin_model_configs", JSON.stringify(state.modelConfigs));
+    }
 
     function toast(msg) {
       const box = document.getElementById("toastBox");
+      if (!box) return;
       box.textContent = msg;
       box.classList.add("show");
       clearTimeout(window._t);
@@ -1193,139 +1334,374 @@
     }
 
     function syncTopModelLabel() {
+      const active = getActiveModelConfig();
+      state.model = active ? active.name : "Gemini 3.8 Flash";
+      safeStorageSet("shadhin_model", state.model);
       document.getElementById("topModelLabel").textContent = `${state.model} • ${state.mode}`;
     }
 
-    function activateProfile(profile) {
-      state.model = profile.name;
-      state.endpoint = profile.endpoint || "";
-      state.modelId = profile.modelId || "";
-      state.apiKey = profile.apiKey || "";
-      localStorage.setItem("shadhin_model", state.model);
-      localStorage.setItem("shadhin_endpoint", state.endpoint);
-      localStorage.setItem("shadhin_model_id", state.modelId);
-      localStorage.setItem("shadhin_api_key", state.apiKey);
+    function selectModelById(idKey) {
+      const target = state.modelConfigs.find((m) => m.id === idKey);
+      if (!target) return;
+      state.activeModelIdKey = target.id;
+      state.model = target.name;
+      safeStorageSet("shadhin_active_model_key", target.id);
+      safeStorageSet("shadhin_model", target.name);
       syncTopModelLabel();
       renderModelPopover();
-      renderSavedProfilesList();
     }
 
-    function renderSavedProfilesList() {
-      const box = document.getElementById("savedProfilesList");
-      box.innerHTML = "";
-      if (!state.customModels.length) {
-        box.innerHTML = '<div class="tool-sub">No custom models added yet.</div>';
-        return;
-      }
-      state.customModels.forEach((p, idx) => {
-        const row = document.createElement("div");
-        row.className = "saved-model-row";
-        const activeTag = state.model === p.name ? " • Active ✓" : "";
-        row.innerHTML = `
-          <div style="flex:1;min-width:0;cursor:pointer;">
-            <div style="font-size:13.5px;font-weight:600;white-space:normal;word-break:break-word;">${p.name}${activeTag}</div>
-            <div class="tool-sub" style="word-break:break-all;">Model ID: ${p.modelId || "default"}</div>
-            <div class="tool-sub" style="word-break:break-all;">URL: ${p.endpoint}</div>
-          </div>
-          <button class="mini-del-btn" data-del="${idx}">Remove</button>
+    function renderGroupList(elId, groupName) {
+      const el = document.getElementById(elId);
+      el.innerHTML = "";
+      const list = state.modelConfigs.filter((m) => m.group === groupName);
+      list.forEach((cfg) => {
+        const isSel = cfg.id === state.activeModelIdKey;
+        const wrap = document.createElement("div");
+        wrap.className = "pop-item-wrap" + (isSel ? " selected" : "");
+
+        const selectBtn = document.createElement("button");
+        selectBtn.type = "button";
+        selectBtn.className = "pop-select-btn";
+        const keyBadge = cfg.apiKey ? "Key ✓" : "No Key";
+        const epText = cfg.endpoint ? cfg.endpoint : "Endpoint not set";
+        selectBtn.innerHTML = `
+          <div style="font-weight:600;">${cfg.name} ${isSel ? "• Active ✓" : ""}</div>
+          <div class="pop-item-sub">ID: ${cfg.modelId || "-"} • ${keyBadge}</div>
+          <div class="pop-item-sub">${epText}</div>
         `;
-        row.firstElementChild.onclick = () => {
-          activateProfile(p);
-          toast(`Switched to ${p.name}`);
+        selectBtn.onclick = () => {
+          selectModelById(cfg.id);
+          document.getElementById("modelPopover").classList.remove("open");
+          toast(`Selected ${cfg.name}`);
         };
-        row.querySelector("[data-del]").onclick = (e) => {
+
+        const editBtn = document.createElement("button");
+        editBtn.type = "button";
+        editBtn.className = "pop-edit-btn";
+        editBtn.textContent = "API / Edit";
+        editBtn.onclick = (e) => {
           e.stopPropagation();
-          state.customModels.splice(idx, 1);
-          localStorage.setItem("shadhin_custom_models", JSON.stringify(state.customModels));
-          renderSavedProfilesList();
-          renderModelPopover();
-          toast("Model removed");
+          document.getElementById("modelPopover").classList.remove("open");
+          openModelApiModal(cfg.id, false);
         };
-        box.appendChild(row);
+
+        wrap.appendChild(selectBtn);
+        wrap.appendChild(editBtn);
+        el.appendChild(wrap);
       });
     }
 
     function renderModelPopover() {
-      const renderGroup = (elId, list) => {
-        const el = document.getElementById(elId);
-        el.innerHTML = "";
-        list.forEach((mName) => {
-          const btn = document.createElement("button");
-          btn.className = "pop-option" + (state.model === mName ? " selected" : "");
-          btn.innerHTML = `<span>${mName}</span><span>${state.model === mName ? "✓" : ""}</span>`;
-          btn.onclick = () => {
-            state.model = mName;
-            localStorage.setItem("shadhin_model", mName);
-            syncTopModelLabel();
-            document.getElementById("modelPopover").classList.remove("open");
-          };
-          el.appendChild(btn);
-        });
-      };
+      renderGroupList("googleModelList", "google");
+      renderGroupList("klingModelList", "kling");
+      renderGroupList("leonardoModelList", "leonardo");
 
-      renderGroup("googleModelList", BUILTIN_MODELS.google);
-      renderGroup("klingModelList", BUILTIN_MODELS.kling);
-      renderGroup("leonardoModelList", BUILTIN_MODELS.leonardo);
-
-      const customEl = document.getElementById("customModelList");
-      customEl.innerHTML = "";
-      if (!state.customModels.length) {
-        customEl.innerHTML = '<div style="font-size:12px;color:#9aa0a6;padding:4px 8px;">Tap "Models & Lang" to add models</div>';
+      const customBox = document.getElementById("customModelList");
+      customBox.innerHTML = "";
+      const customList = state.modelConfigs.filter((m) => m.group === "custom");
+      if (!customList.length) {
+        customBox.innerHTML = '<div class="pop-item-sub" style="padding:4px 6px;">Tap "+ Add Model" to create a custom model with API & Edit.</div>';
       } else {
-        state.customModels.forEach((cm) => {
-          const btn = document.createElement("button");
-          btn.className = "pop-option" + (state.model === cm.name ? " selected" : "");
-          btn.innerHTML = `<span>🔗 ${cm.name}</span><span>${state.model === cm.name ? "✓" : ""}</span>`;
-          btn.onclick = () => {
-            activateProfile(cm);
+        customList.forEach((cfg) => {
+          const isSel = cfg.id === state.activeModelIdKey;
+          const wrap = document.createElement("div");
+          wrap.className = "pop-item-wrap" + (isSel ? " selected" : "");
+
+          const selectBtn = document.createElement("button");
+          selectBtn.type = "button";
+          selectBtn.className = "pop-select-btn";
+          selectBtn.innerHTML = `
+            <div style="font-weight:600;">🔗 ${cfg.name} ${isSel ? "• Active ✓" : ""}</div>
+            <div class="pop-item-sub">ID: ${cfg.modelId || "-"} • ${cfg.apiKey ? "Key ✓" : "No Key"}</div>
+            <div class="pop-item-sub">${cfg.endpoint || "Endpoint not set"}</div>
+          `;
+          selectBtn.onclick = () => {
+            selectModelById(cfg.id);
             document.getElementById("modelPopover").classList.remove("open");
-            toast(`Activated ${cm.name}`);
+            toast(`Selected ${cfg.name}`);
           };
-          customEl.appendChild(btn);
+
+          const editBtn = document.createElement("button");
+          editBtn.type = "button";
+          editBtn.className = "pop-edit-btn";
+          editBtn.textContent = "API / Edit";
+          editBtn.onclick = (e) => {
+            e.stopPropagation();
+            document.getElementById("modelPopover").classList.remove("open");
+            openModelApiModal(cfg.id, false);
+          };
+
+          wrap.appendChild(selectBtn);
+          wrap.appendChild(editBtn);
+          customBox.appendChild(wrap);
         });
       }
     }
 
+    function openModelApiModal(idKey, isNew = false) {
+      state.addingNewModel = Boolean(isNew);
+      state.editingKey = idKey || null;
+      document.getElementById("languageSelect").value = state.language;
+
+      const delBtn = document.getElementById("deleteCustomModelBtn");
+      if (isNew) {
+        document.getElementById("modelApiModalTitle").textContent = "Add New Model API";
+        document.getElementById("editModelNameInput").value = "";
+        document.getElementById("editModelIdInput").value = "";
+        document.getElementById("editEndpointInput").value = "https://generativelanguage.googleapis.com/v1beta";
+        document.getElementById("editApiKeyInput").value = "";
+        delBtn.style.display = "none";
+      } else {
+        const cfg = state.modelConfigs.find((m) => m.id === idKey) || getActiveModelConfig();
+        state.editingKey = cfg.id;
+        document.getElementById("modelApiModalTitle").textContent = `Edit API: ${cfg.name}`;
+        document.getElementById("editModelNameInput").value = cfg.name || "";
+        document.getElementById("editModelIdInput").value = cfg.modelId || "";
+        document.getElementById("editEndpointInput").value = cfg.endpoint || "";
+        document.getElementById("editApiKeyInput").value = cfg.apiKey || "";
+        delBtn.style.display = cfg.group === "custom" ? "block" : "none";
+      }
+
+      document.getElementById("modelApiModal").classList.add("open");
+    }
+
+    document.getElementById("addCustomModelInPopBtn").onclick = (e) => {
+      e.stopPropagation();
+      document.getElementById("modelPopover").classList.remove("open");
+      openModelApiModal(null, true);
+    };
+
+    document.getElementById("closeModelApiModalBtn").onclick = () => {
+      document.getElementById("modelApiModal").classList.remove("open");
+    };
+
+    document.getElementById("savePerModelApiBtn").onclick = () => {
+      const name = document.getElementById("editModelNameInput").value.trim();
+      const modelId = document.getElementById("editModelIdInput").value.trim();
+      const endpoint = cleanUrlInput(document.getElementById("editEndpointInput").value);
+      const apiKey = document.getElementById("editApiKeyInput").value.trim();
+
+      if (!name && !modelId) {
+        toast("Enter a model name or Model ID");
+        return;
+      }
+
+      const finalName = name || modelId;
+
+      if (state.addingNewModel) {
+        const newId = `custom__${Date.now()}`;
+        const newCfg = {
+          id: newId,
+          group: "custom",
+          isCustom: true,
+          name: finalName,
+          modelId: modelId || finalName,
+          endpoint,
+          apiKey
+        };
+        state.modelConfigs.push(newCfg);
+        state.activeModelIdKey = newId;
+        safeStorageSet("shadhin_active_model_key", newId);
+      } else {
+        const idx = state.modelConfigs.findIndex((m) => m.id === state.editingKey);
+        if (idx >= 0) {
+          state.modelConfigs[idx] = {
+            ...state.modelConfigs[idx],
+            name: finalName,
+            modelId: modelId || state.modelConfigs[idx].modelId || finalName,
+            endpoint,
+            apiKey
+          };
+          state.activeModelIdKey = state.modelConfigs[idx].id;
+          safeStorageSet("shadhin_active_model_key", state.activeModelIdKey);
+        }
+      }
+
+      saveModelConfigs();
+      syncTopModelLabel();
+      renderModelPopover();
+      document.getElementById("modelApiModal").classList.remove("open");
+      toast(`Saved & activated: ${finalName}`);
+    };
+
+    document.getElementById("deleteCustomModelBtn").onclick = () => {
+      const idx = state.modelConfigs.findIndex((m) => m.id === state.editingKey && m.group === "custom");
+      if (idx < 0) return;
+      state.modelConfigs.splice(idx, 1);
+      if (!state.modelConfigs.some((m) => m.id === state.activeModelIdKey)) {
+        state.activeModelIdKey = state.modelConfigs[0]?.id || "google__Gemini 3.8 Flash";
+        safeStorageSet("shadhin_active_model_key", state.activeModelIdKey);
+      }
+      saveModelConfigs();
+      syncTopModelLabel();
+      renderModelPopover();
+      document.getElementById("modelApiModal").classList.remove("open");
+      toast("Custom model deleted");
+    };
+
+    document.getElementById("pickApiConfigFileBtn").onclick = () => {
+      document.getElementById("apiConfigFileInput").click();
+    };
+
+    document.getElementById("apiConfigFileInput").onchange = (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const content = String(reader.result || "").trim();
+        let parsedKey = "";
+        let parsedEndpoint = "";
+        let parsedModel = "";
+        let parsedName = "";
+
+        try {
+          const json = JSON.parse(content);
+          parsedKey = json.apiKey || json.api_key || json.key || json.GOOGLE_API_KEY || json.GROQ_API_KEY || "";
+          parsedEndpoint = json.endpoint || json.endpointUrl || json.endpoint_url || json.baseUrl || json.url || "";
+          parsedModel = json.modelId || json.model_id || json.model || "";
+          parsedName = json.name || json.displayName || json.label || "";
+        } catch (_) {
+          const keyMatch = content.match(/(?:api[_-]?key|key)\s*[:=]\s*["']?([A-Za-z0-9_\-\.]+)["']?/i);
+          const urlMatch = content.match(/(https?:\/\/[^\s"']+)/i);
+          const modelMatch = content.match(/(?:model[_-]?id|model)\s*[:=]\s*["']?([A-Za-z0-9_\-\.\/:]+)["']?/i);
+          if (keyMatch) parsedKey = keyMatch[1];
+          if (urlMatch) parsedEndpoint = urlMatch[1];
+          if (modelMatch) parsedModel = modelMatch[1];
+          if (!parsedKey && content.length >= 16 && content.length <= 200 && !/\s/.test(content)) {
+            parsedKey = content;
+          }
+        }
+
+        if (parsedName) document.getElementById("editModelNameInput").value = parsedName;
+        if (parsedModel) document.getElementById("editModelIdInput").value = parsedModel;
+        if (parsedEndpoint) document.getElementById("editEndpointInput").value = cleanUrlInput(parsedEndpoint);
+        if (parsedKey) document.getElementById("editApiKeyInput").value = parsedKey.trim();
+
+        toast(`Loaded from file: ${file.name}`);
+      };
+      reader.readAsText(file);
+      e.target.value = "";
+    };
+
+    document.getElementById("languageSelect").onchange = (e) => {
+      state.language = e.target.value;
+      safeStorageSet("shadhin_language", state.language);
+      toast(`Language: ${state.language}`);
+    };
+
+    function getActiveGmailAccount() {
+      if (state.activeGmailIndex >= 0 && state.activeGmailIndex < state.gmailAccounts.length) {
+        return state.gmailAccounts[state.activeGmailIndex];
+      }
+      return null;
+    }
+
     function syncAccountsUI() {
-      if (!state.accounts.length) state.accounts = [{ name: "Shadhin", email: "shadhin@local.app" }];
-      if (state.activeAcc >= state.accounts.length) state.activeAcc = 0;
-      const cur = state.accounts[state.activeAcc];
-      const initial = (cur.name || "S").charAt(0).toUpperCase();
+      const cur = getActiveGmailAccount();
+      const displayName = cur ? cur.name : "Shadhin";
+      const badgeLetter = cur && cur.email ? cur.email.charAt(0).toUpperCase() : "G";
 
-      document.getElementById("heroGreeting").textContent = `Hi ${cur.name}, what's on your mind?`;
-      document.getElementById("openAccountModalBtn").textContent = initial;
-      document.getElementById("drawerAvatarBadge").textContent = initial;
-      document.getElementById("drawerAccountName").textContent = cur.name;
-      document.getElementById("modalCurrentAccName").textContent = cur.name;
-      document.getElementById("modalCurrentAccEmail").textContent = cur.email || "Local Account";
+      document.getElementById("heroGreeting").textContent = cur
+        ? `Hi ${cur.name}, what's on your mind?`
+        : "Hi Shadhin, what's on your mind?";
+      document.getElementById("openAccountModalBtn").textContent = badgeLetter;
+      document.getElementById("drawerAvatarBadge").textContent = badgeLetter;
+      document.getElementById("drawerAccountName").textContent = cur ? cur.email : "Gmail Account";
 
-      const list = document.getElementById("savedAccountsList");
-      list.innerHTML = "";
-      state.accounts.forEach((acc, i) => {
+      document.getElementById("modalCurrentAccName").textContent = cur ? cur.name : "No Gmail Signed In";
+      document.getElementById("modalCurrentAccEmail").textContent = cur ? cur.email : "Sign in with Gmail address & password";
+      document.getElementById("modalCurrentAccStatus").textContent = cur
+        ? "Status: Signed in (Gmail)"
+        : "Status: Signed out";
+
+      const listEl = document.getElementById("savedAccountsList");
+      listEl.innerHTML = "";
+      if (!state.gmailAccounts.length) {
+        listEl.innerHTML = '<div class="tool-sub">No Gmail account added yet.</div>';
+        return;
+      }
+
+      state.gmailAccounts.forEach((acc, i) => {
         const row = document.createElement("div");
         row.className = "tool-row";
+        const isAct = i === state.activeGmailIndex;
         row.innerHTML = `
           <div>
-            <div style="font-size:13.5px;font-weight:500;">${acc.name}</div>
-            <div class="tool-sub">${acc.email || "Local"}</div>
+            <div style="font-size:13.5px;font-weight:600;">${acc.email}</div>
+            <div class="tool-sub">${acc.name} • Password saved ✓</div>
           </div>
-          <span style="font-size:12px;color:#a8c7fa;">${i === state.activeAcc ? "Active ✓" : "Switch"}</span>
+          <span style="font-size:12px;color:#a8c7fa;">${isAct ? "Signed In ✓" : "Sign In"}</span>
         `;
         row.onclick = () => {
-          state.activeAcc = i;
-          localStorage.setItem("shadhin_active_acc", String(i));
+          state.activeGmailIndex = i;
+          safeStorageSet("shadhin_active_gmail_idx", String(i));
           syncAccountsUI();
-          toast(`Switched to ${acc.name}`);
+          toast(`Signed in as ${acc.email}`);
         };
-        list.appendChild(row);
+        listEl.appendChild(row);
       });
     }
+
+    document.getElementById("gmailLoginBtn").onclick = () => {
+      const email = document.getElementById("gmailAddressInput").value.trim().toLowerCase();
+      const password = document.getElementById("gmailPasswordInput").value;
+
+      if (!email || !email.includes("@")) {
+        toast("Enter a valid Gmail address");
+        return;
+      }
+      if (!password) {
+        toast("Enter your password");
+        return;
+      }
+
+      const namePart = email.split("@")[0].replace(/[._-]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) || "Gmail User";
+      const existingIdx = state.gmailAccounts.findIndex((a) => a.email.toLowerCase() === email);
+
+      if (existingIdx >= 0) {
+        state.gmailAccounts[existingIdx].password = password;
+        state.gmailAccounts[existingIdx].name = namePart;
+        state.activeGmailIndex = existingIdx;
+      } else {
+        state.gmailAccounts.push({ email, password, name: namePart });
+        state.activeGmailIndex = state.gmailAccounts.length - 1;
+      }
+
+      safeStorageSet("shadhin_gmail_accounts", JSON.stringify(state.gmailAccounts));
+      safeStorageSet("shadhin_active_gmail_idx", String(state.activeGmailIndex));
+      document.getElementById("gmailPasswordInput").value = "";
+      syncAccountsUI();
+      toast(`Logged in: ${email}`);
+    };
+
+    document.getElementById("gmailSignOutBtn").onclick = () => {
+      state.activeGmailIndex = -1;
+      safeStorageSet("shadhin_active_gmail_idx", "-1");
+      syncAccountsUI();
+      toast("Signed out");
+    };
+
+    function openAccountModal() {
+      syncAccountsUI();
+      document.getElementById("accountModal").classList.add("open");
+    }
+
+    document.getElementById("openAccountModalBtn").onclick = openAccountModal;
+    document.getElementById("drawerFooterAccount").onclick = () => {
+      document.getElementById("drawerOverlay").classList.remove("open");
+      openAccountModal();
+    };
+    document.getElementById("closeAccountModalBtn").onclick = () => {
+      document.getElementById("accountModal").classList.remove("open");
+    };
 
     function renderDrawerLists(filterText = "") {
       const nbList = document.getElementById("drawerNotebooksList");
       nbList.innerHTML = "";
       state.notebooks.forEach((nb) => {
         const b = document.createElement("button");
+        b.type = "button";
         b.className = "history-row";
         b.textContent = `📓 ${nb}`;
         b.onclick = () => {
@@ -1351,6 +1727,7 @@
       } else {
         filtered.forEach((s) => {
           const b = document.createElement("button");
+          b.type = "button";
           b.className = "history-row";
           b.textContent = s.title;
           b.onclick = () => {
@@ -1358,7 +1735,7 @@
             state.currentSessionId = s.id;
             const list = document.getElementById("chatList");
             list.innerHTML = "";
-            s.messages.forEach((m) => renderBubble(m.role, m.text, m.meta));
+            (s.messages || []).forEach((m) => renderBubble(m.role, m.text, m.meta));
             switchView("viewChat");
             document.getElementById("drawerOverlay").classList.remove("open");
           };
@@ -1374,12 +1751,12 @@
         state.sessions.slice(-5).reverse().forEach((s) => {
           const c = document.createElement("div");
           c.className = "card-box";
-          c.innerHTML = `<strong>📄 ${s.title}</strong><div class="tool-sub">${s.messages.length} messages</div>`;
+          c.innerHTML = `<strong>📄 ${s.title}</strong><div class="tool-sub">${(s.messages || []).length} messages</div>`;
           c.onclick = () => {
             state.currentSessionId = s.id;
             const list = document.getElementById("chatList");
             list.innerHTML = "";
-            s.messages.forEach((m) => renderBubble(m.role, m.text, m.meta));
+            (s.messages || []).forEach((m) => renderBubble(m.role, m.text, m.meta));
             switchView("viewChat");
           };
           libDocs.appendChild(c);
@@ -1435,7 +1812,7 @@
 
     document.addEventListener("click", (e) => {
       const pop = document.getElementById("modelPopover");
-      if (pop.classList.contains("open") && !pop.contains(e.target) && e.target.id !== "modelPopoverBtn") {
+      if (pop && pop.classList.contains("open") && !pop.contains(e.target) && e.target.id !== "modelPopoverBtn") {
         pop.classList.remove("open");
       }
     });
@@ -1445,7 +1822,7 @@
         document.querySelectorAll("#modeRow .mode-pill-btn").forEach((b) => b.classList.remove("active"));
         btn.classList.add("active");
         state.mode = btn.dataset.mode;
-        localStorage.setItem("shadhin_mode", state.mode);
+        safeStorageSet("shadhin_mode", state.mode);
         syncTopModelLabel();
       };
     });
@@ -1462,85 +1839,13 @@
       switchView("viewHome");
     };
 
-    function openAccountModal() {
-      document.getElementById("languageSelect").value = state.language;
-      document.getElementById("customEndpointInput").value = state.endpoint;
-      document.getElementById("customModelIdInput").value = state.modelId;
-      document.getElementById("customApiKeyInput").value = state.apiKey;
-      syncAccountsUI();
-      renderSavedProfilesList();
-      document.getElementById("accountModal").classList.add("open");
-    }
-
-    document.getElementById("languageSelect").onchange = (e) => {
-      state.language = e.target.value;
-      localStorage.setItem("shadhin_language", state.language);
-      toast(`Language: ${state.language}`);
-    };
-
-    document.getElementById("openAccountModalBtn").onclick = openAccountModal;
-    document.getElementById("openApiSetupBtn").onclick = openAccountModal;
-    document.getElementById("drawerModelLinkBtn").onclick = () => {
-      document.getElementById("drawerOverlay").classList.remove("open");
-      openAccountModal();
-    };
-    document.getElementById("drawerFooterAccount").onclick = () => {
-      document.getElementById("drawerOverlay").classList.remove("open");
-      openAccountModal();
-    };
-    document.getElementById("closeAccountModalBtn").onclick = () => {
-      document.getElementById("accountModal").classList.remove("open");
-    };
-
-    document.getElementById("saveNewAccountBtn").onclick = () => {
-      const name = document.getElementById("newAccName").value.trim();
-      const email = document.getElementById("newAccEmail").value.trim();
-      if (!name) return;
-      state.accounts.push({ name, email: email || "Local Account" });
-      state.activeAcc = state.accounts.length - 1;
-      localStorage.setItem("shadhin_accounts", JSON.stringify(state.accounts));
-      localStorage.setItem("shadhin_active_acc", String(state.activeAcc));
-      document.getElementById("newAccName").value = "";
-      document.getElementById("newAccEmail").value = "";
-      syncAccountsUI();
-      toast("Account added");
-    };
-
-    document.getElementById("saveModelLinkBtn").onclick = () => {
-      const modelId = document.getElementById("customModelIdInput").value.trim();
-      const label = document.getElementById("customModelLabelInput").value.trim() || modelId || "Custom Model";
-      const endpoint = document.getElementById("customEndpointInput").value.trim();
-      const apiKey = document.getElementById("customApiKeyInput").value.trim();
-
-      if (!endpoint) {
-        toast("Please paste a valid endpoint URL");
-        return;
-      }
-
-      const profile = { name: label, modelId: modelId || label, endpoint, apiKey };
-      const existingIdx = state.customModels.findIndex((m) => m.name === label);
-      if (existingIdx >= 0) state.customModels[existingIdx] = profile;
-      else state.customModels.push(profile);
-
-      localStorage.setItem("shadhin_custom_models", JSON.stringify(state.customModels));
-      activateProfile(profile);
-
-      document.getElementById("customModelLabelInput").value = "";
-      document.getElementById("customModelIdInput").value = "";
-      toast(`Saved & activated: ${label}`);
-    };
-
     document.getElementById("clearAllDataBtn").onclick = () => {
       state.sessions = [];
       state.currentSessionId = null;
-      localStorage.setItem("shadhin_sessions", "[]");
+      safeStorageSet("shadhin_sessions", "[]");
       renderDrawerLists();
       switchView("viewHome");
       toast("Chat history cleared");
-    };
-
-    document.getElementById("showHelpToastBtn").onclick = () => {
-      toast("Shadhin -AI Open Source • Multi-Model & Multi-Language");
     };
 
     document.getElementById("openDrawerBtn").onclick = () => {
@@ -1602,7 +1907,7 @@
     function addNotebook() {
       const name = `Notebook ${state.notebooks.length + 1}`;
       state.notebooks.push(name);
-      localStorage.setItem("shadhin_notebooks", JSON.stringify(state.notebooks));
+      safeStorageSet("shadhin_notebooks", JSON.stringify(state.notebooks));
       renderDrawerLists();
       toast(`Created ${name}`);
     }
@@ -1751,13 +2056,15 @@
         const rec = new SR();
         rec.lang = getSpeechLangCode();
         rec.onresult = (ev) => {
-          promptInput.value = ev.results[0][0].transcript;
-          updateSendVisibility();
-          promptInput.focus();
+          if (ev.results && ev.results[0] && ev.results[0][0]) {
+            promptInput.value = ev.results[0][0].transcript;
+            updateSendVisibility();
+            promptInput.focus();
+          }
         };
         rec.onerror = () => toast("Use keyboard voice input");
         rec.start();
-      } catch (e) {
+      } catch (_) {
         promptInput.focus();
       }
     };
@@ -1786,16 +2093,21 @@
       if (state.tempMode) return;
       if (!state.currentSessionId) {
         state.currentSessionId = String(Date.now());
-        state.sessions.push({ id: state.currentSessionId, title: text.slice(0, 38), messages: [] });
+        state.sessions.push({ id: state.currentSessionId, title: String(text || "").slice(0, 38) || "Chat", messages: [] });
       }
       const sess = state.sessions.find((s) => s.id === state.currentSessionId);
       if (sess) {
         sess.messages.push({ role, text, meta });
-        localStorage.setItem("shadhin_sessions", JSON.stringify(state.sessions));
+        safeStorageSet("shadhin_sessions", JSON.stringify(state.sessions));
       }
     }
 
     async function sendMessage(overrideText) {
+      if (state.isSending) {
+        toast("Please wait, reply is loading...");
+        return;
+      }
+
       let text = (typeof overrideText === "string" ? overrideText : promptInput.value).trim();
       if (!text && state.attachedName) text = `Analyze attached file: ${state.attachedName}`;
       if (!text) return;
@@ -1813,7 +2125,10 @@
 
       state.attachedName = "";
       state.attachedDataUrl = "";
-      ["photoInput", "cameraInput", "fileInput"].forEach((id) => { document.getElementById(id).value = ""; });
+      ["photoInput", "cameraInput", "fileInput"].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.value = "";
+      });
       document.getElementById("attachmentPill").classList.remove("active");
 
       if (typeof overrideText !== "string") {
@@ -1821,47 +2136,56 @@
         updateSendVisibility();
       }
 
-      const metaLabel = `${state.model} • ${state.mode} • ${state.language}`;
+      const activeCfg = getActiveModelConfig() || {};
+      const metaLabel = `${activeCfg.name || state.model} • ${state.mode} • ${state.language}`;
+      const cleanedEndpoint = cleanUrlInput(activeCfg.endpoint || "");
 
-      if (state.endpoint) {
+      if (cleanedEndpoint) {
+        state.isSending = true;
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 30000);
+
         try {
-          const isGeminiNative = state.endpoint.includes("generativelanguage.googleapis.com");
+          const isGeminiNative = cleanedEndpoint.includes("generativelanguage.googleapis.com");
           const headers = { "Content-Type": "application/json" };
-          let url = state.endpoint.replace(/\/+$/, "");
+          let url = cleanedEndpoint.replace(/\/+$/, "");
           let payload;
 
           if (isGeminiNative) {
-            const mId = state.modelId || "gemini-2.5-flash";
+            const mId = (activeCfg.modelId || "gemini-3.8-flash").trim();
             if (!url.includes(":generateContent")) {
               url = `${url}/models/${encodeURIComponent(mId)}:generateContent`;
             }
-            if (state.apiKey && !url.includes("key=")) {
+            if (activeCfg.apiKey && !url.includes("key=")) {
               const sep = url.includes("?") ? "&" : "?";
-              url = `${url}${sep}key=${encodeURIComponent(state.apiKey)}`;
+              url = `${url}${sep}key=${encodeURIComponent(activeCfg.apiKey.trim())}`;
             }
             payload = {
               contents: [{ parts: [{ text: finalPrompt }] }]
             };
           } else {
-            if (state.apiKey) headers["Authorization"] = `Bearer ${state.apiKey}`;
+            if (!/\/chat\/completions$/i.test(url)) {
+              url = `${url}/chat/completions`;
+            }
+            if (activeCfg.apiKey) headers["Authorization"] = `Bearer ${activeCfg.apiKey.trim()}`;
             payload = {
-              model: state.modelId || state.model,
-              messages: [{ role: "user", content: finalPrompt }],
-              prompt: finalPrompt,
-              mode: state.mode,
-              language: state.language
+              model: (activeCfg.modelId || activeCfg.name || "llama-3.3-70b-versatile").trim(),
+              messages: [{ role: "user", content: finalPrompt }]
             };
           }
 
           const res = await fetch(url, {
             method: "POST",
             headers,
-            body: JSON.stringify(payload)
+            body: JSON.stringify(payload),
+            signal: controller.signal
           });
 
+          clearTimeout(timer);
           const raw = await res.text();
+
           if (!res.ok) {
-            pushMessage("ai", `HTTP ${res.status}: ${raw}`, metaLabel);
+            pushMessage("ai", `HTTP ${res.status}: ${raw || "Server returned an error."}`, metaLabel);
             return;
           }
 
@@ -1877,17 +2201,23 @@
               raw;
           } catch (_) {}
 
-          pushMessage("ai", reply || "Empty response from endpoint.", metaLabel);
+          pushMessage("ai", String(reply || "Empty response from endpoint."), metaLabel);
           return;
         } catch (err) {
-          pushMessage("ai", `Endpoint request failed: ${err.message}`, metaLabel);
+          clearTimeout(timer);
+          const msg = err && err.name === "AbortError"
+            ? "Request timed out (30s). Please try again."
+            : `Endpoint request failed: ${(err && err.message) || "Network error"}`;
+          pushMessage("ai", msg, metaLabel);
           return;
+        } finally {
+          state.isSending = false;
         }
       }
 
       pushMessage(
         "ai",
-        `[${metaLabel}]\n"${text}"\n\nTap "Models & Lang" at the top right to add multiple model links, API keys, and languages.`,
+        `[${metaLabel}]\n"${text}"\n\nTap the model switcher at top left, then tap "API / Edit" on ${activeCfg.name || state.model} to add its Endpoint URL & API Key.`,
         metaLabel
       );
     }
@@ -1897,7 +2227,6 @@
     syncTopModelLabel();
     syncAccountsUI();
     renderModelPopover();
-    renderSavedProfilesList();
     renderDrawerLists();
   </script>
 </body>
